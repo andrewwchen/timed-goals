@@ -24,8 +24,8 @@
 			{
 				"command": "timedgoals.createProgressBar",
 				"title": "Create Progress Bar"
-      },
-      {
+			},
+			{
 				"command": "timedgoals.testCommand",
 				"title": "Test Command"
 			}
