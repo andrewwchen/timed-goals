@@ -20,7 +20,7 @@ function remainingTime(goal) {
 function createProgressBar(goal) {
   vscode.window.withProgress({
     location: vscode.ProgressLocation.Notification,
-    title: `${goal.name} ${remainingTime(goal)}`,
+    title: `${goal.name} ${msToStr(remainingTime(goal))}`,
     cancellable: true
   }, (progress, token) => {
 
@@ -63,7 +63,7 @@ function createProgressBar(goal) {
  */
 function addTimedGoal(context, newTimedGoal){
     // Get current goals state
-    updatedGoals = context.globalState.get('data').goals;
+    let updatedGoals = context.globalState.get('data').goals;
     
     // Add new goal to copy of present state
     updatedGoals.push(newTimedGoal);
