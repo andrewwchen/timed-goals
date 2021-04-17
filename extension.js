@@ -53,7 +53,7 @@ function activate(context) {
 	// Push all functions so that VSCode knows about them
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(vscode.commands.registerCommand('timedgoals.createProgressBar', libCommands.createProgressBar(data.goals[0])));
-  context.subscriptions.push(testCommand);
+  	context.subscriptions.push(testCommand);
 
 }
 

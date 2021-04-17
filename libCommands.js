@@ -93,6 +93,6 @@ function createTimedGoal(time, name, duration, complete){
 
 module.exports = {
     createTimedGoal,
-    addTimedGoal
+    addTimedGoal,
     createProgressBar
 }
