@@ -2,8 +2,8 @@
 // Import the module and reference it with the alias vscode in your code below
 const { createExpressionWithTypeArguments } = require('typescript');
 const vscode = require('vscode');
-const libCommands = require('./libCommands');
-
+const libCommands = require('./libCommands')
+const data = require('./testData.json')
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -52,7 +52,9 @@ function activate(context) {
 
 	// Push all functions so that VSCode knows about them
 	context.subscriptions.push(disposable);
-	context.subscriptions.push(testCommand);
+	context.subscriptions.push(vscode.commands.registerCommand('timedgoals.createProgressBar', libCommands.createProgressBar(data.goals[0])));
+  context.subscriptions.push(testCommand);
+
 }
 
 // this method is called when your extension is deactivated
