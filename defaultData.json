@@ -1,0 +1,25 @@
+{
+  "goals": [
+    {
+      "id": 0,
+      "name": "goal number 1",
+      "time": 1618713875,
+      "duration": 600000,
+      "complete": true
+    },
+    {
+      "id": 5,
+      "name": "goal number 2",
+      "time": 1618713890,
+      "duration": 600,
+      "complete": false
+    },
+    {
+      "id": 2,
+      "name": "goal number 3",
+      "time": 1618713895,
+      "duration": 60,
+      "complete": false
+    }
+  ]
+}

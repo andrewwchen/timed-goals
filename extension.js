@@ -13,21 +13,13 @@ const libCommands = require('./libCommands')
 function activate(context) {
 
 	// Create global state on startup
-	context.globalState.update('data', {goals:[ ]});
+	// context.globalState.update('data', {goals:[ ]});
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "timedgoals" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('timedgoals.helloWorld', function () {
-		// The code you place here will be executed every time your command is executed
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from TimedGoals!');
-	});
 
 	let testCommand = vscode.commands.registerCommand('timedgoals.testCommand', function(){
 		// Create new item to put in store
@@ -49,10 +41,10 @@ function activate(context) {
 		vscode.window.showInformationMessage(nameOfFirstGoal + " Length: " + numberOfGoals + "| Current Time: " + currentTime);
 	});
 
-	let testCommand2 = vscode.commands.registerCommand('timedgoals.createProgressBar', function(){
-		let item = libCommands.createTimedGoal(Date.now() - 5000, "This is the name", 10, false);
-		libCommands.addTimedGoal(context, item);
-		libCommands.createProgressBar(context.globalState.get('data').goals[0])
+	let showTimer = vscode.commands.registerCommand('timedgoals.showTimer', function(){
+		libCommands.showTimer(context);
+		//let goals = context.globalState.get('data').goals;
+
 	});
 
 	let viewUI = vscode.commands.registerCommand('timedgoals.viewUI', function(){
@@ -60,10 +52,8 @@ function activate(context) {
 	});
 
 	// Push all functions so that VSCode knows about them
-	context.subscriptions.push(disposable);
-	context.subscriptions.push(testCommand2);
-	context.subscriptions.push(testCommand);
 	context.subscriptions.push(viewUI);
+	context.subscriptions.push(showTimer);
 	libCommands.viewUI(context);
 }
 

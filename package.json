@@ -10,9 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:timedgoals.helloWorld",
-		"onCommand:timedgoals.createProgressBar",
-		"onCommand:timedgoals.testCommand",
+		"onCommand:timedgoals.showTimer",
 		"onCommand:timedgoals.viewUI",
 		"*"
 	],
@@ -20,20 +18,12 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "timedgoals.helloWorld",
-				"title": "Hello World"
-			},
-			{
-				"command": "timedgoals.createProgressBar",
-				"title": "Create Progress Bar"
-			},
-			{
-				"command": "timedgoals.testCommand",
-				"title": "Test Command"
-			},
-			{
 				"command": "timedgoals.viewUI",
 				"title": "Timed Goals: View UI"
+			},
+			{
+				"command": "timedgoals.showTimer",
+				"title": "Timed Goals: Show Timer"
 			}
 		]
 	},

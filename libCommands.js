@@ -1,10 +1,10 @@
 // VSCode import
 const vscode = require('vscode');
+const defaultData = require('./defaultData.json');
 
 /*
 msToStr: A helper function that converts time in milliseconds to formatted
          hours, minutes, seconds
-
 int ms
 
 referenced: https://stackoverflow.com/questions/13601737/how-to-convert-milliseconds-into-a-readable-date-minutesseconds-format
@@ -30,7 +30,6 @@ function msToStr(ms) {
 /*
 remainingTime: A helper function that calculates a goal's time remaining
                in seconds
-
 Object goal
 */
 function remainingTime(goal) {
@@ -42,7 +41,6 @@ function remainingTime(goal) {
 
 /*
 createProgressBar: A function that displays a live timer for a goal
-
 Object goal
 */
 function createProgressBar(goal) {
@@ -79,6 +77,35 @@ function createProgressBar(goal) {
 }
 
 /*
+showTimer: A function that displays a live timer for the most pressing goal
+vscode context context
+*/
+function showTimer(context) {
+  let mostPressing = undefined;
+  let oldGoals = getTimedGoals(context);
+  for (let i=0; i < oldGoals.length; i++) {
+    if (!oldGoals[i].complete) {
+      console.log("1 + " + oldGoals[i].name);
+      // start time in future
+      if (remainingTime(oldGoals[i]) > 0) {
+        console.log("2 + " + oldGoals[i].name);
+        if (!mostPressing || remainingTime(mostPressing) > remainingTime(oldGoals[i])) {
+          console.log("3 + " + oldGoals[i].name);
+          mostPressing = oldGoals[i];
+        }
+      }
+      
+    }
+  }
+  if (mostPressing) {
+    console.log(mostPressing.name)
+    createProgressBar(mostPressing);
+  } else {
+    console.log("none were most pressing")
+  }
+}
+
+/*
 * addTimedGoal: A function that takes the workplace context and a new timedGoal
 * json object and adds it to the ExtensionContext.workspacestate data store.
 * Returns void.
@@ -100,34 +127,94 @@ function addTimedGoal(context, newTimedGoal){
 /*
 * createTimedGoal: Creates a json object to be saved to the global data store
 * from a list of passed parameters
+* @param id int
 * @param time Date (starttime in ms unix)
 * @param name String
 * @param duration int (seconds)
 * @param complete boolean
 */
-
-function createTimedGoal(time, name, duration, complete){
-    return{
-            name: name,
-            time: time,
-            duration: duration,
-            complete: complete
-        }
+function createTimedGoal(time, name, duration, complete, id) {
+  return {
+    id: id,
+    name: name,
+    time: time,
+    duration: duration,
+    complete: complete
+  }
 }
 
+/*
+* deleteTimedGoal: Deletes a json object from the global data store
+* @param id int
+/**
+ * @param {vscode.ExtensionContext} context
+ */
+function deleteTimedGoal(id, context){
+  let oldGoals = context.globalState.get('data').goals;
+  for (let i=0; i < oldGoals.length; i++) {
+    if (oldGoals[i].id == id) {
+      oldGoals.splice(i,1);
+      context.globalState.update('data', {goals: oldGoals});
+      break;
+    }
+  }
+}
+
+/*
+* completeTimedGoal: Completes a json object from the global data store
+* @param id int
+/**
+ * @param {vscode.ExtensionContext} context
+ */
+function completeTimedGoal(id, context) {
+  let oldGoals = context.globalState.get('data').goals;
+  for (let i=0; i < oldGoals.length; i++) {
+    if (oldGoals[i].id == id) {
+      oldGoals[i].complete = true;
+      context.globalState.update('data', {goals: oldGoals});
+      break;
+    }
+  }
+}
+
+
+/*
+* getTimedGoals: Gets json objects from the global data store
+/**
+ * @param {vscode.ExtensionContext} context
+ */
+function getTimedGoals(context) {
+  let oldGoals = context.globalState.get('data').goals;
+  if (true || !oldGoals || oldGoals.length < 1) {
+    context.globalState.update('data', defaultData);
+    oldGoals = context.globalState.get('data').goals;
+    for (let i=0; i < oldGoals.length; i++) {
+      oldGoals[i].time = Date.now();
+    }
+    
+  }
+  return oldGoals;
+}
+
+/*
+* getNewId: Gets highest id among data objectes
+/**
+ * @param {vscode.ExtensionContext} context
+ */
+function getNewId(context){
+  let oldGoals = context.globalState.get('data').goals;
+  let highestId = 0;
+  for (let i=0; i < oldGoals.length; i++) {
+    if (oldGoals[i].id > highestId) {
+      highestId = oldGoals[i].id;
+    }
+  }
+  return highestId + 1;
+}
+
+
 function getIndexPanelHtml(){
-	return `<!DOCTYPE html>
-	<html lang="en">
-	<head>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Cat Coding</title>
-	</head>
-	<body>
-			<h1>Timed Goals</h1>
-			<img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" width="300" />
-	</body>
-	</html>`;
+	return ;
 }
 
 let currentPanel = undefined;
@@ -161,6 +248,10 @@ function viewUI(context) {
 module.exports = {
   createTimedGoal,
   addTimedGoal,
-  createProgressBar,
+  showTimer,
+  deleteTimedGoal,
+  completeTimedGoal,
+  getTimedGoals,
+  getNewId,
   viewUI
 }
