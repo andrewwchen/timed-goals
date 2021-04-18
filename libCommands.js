@@ -60,6 +60,7 @@ function createProgressBar(goal) {
 * Returns void.
 /**
  * @param {vscode.ExtensionContext} context
+ * @param newTimedGoal: json object to add to state
  */
 function addTimedGoal(context, newTimedGoal){
     // Get current goals state
