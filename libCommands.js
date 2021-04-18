@@ -2,7 +2,6 @@
 const fs = require('fs');
 const vscode = require('vscode');
 const defaultData = require('./defaultData.json');
-const path = require("path");
 
 /*
 msToStr: A helper function that converts time in milliseconds to formatted
@@ -184,15 +183,14 @@ function completeTimedGoal(id, context) {
 /**
  * @param {vscode.ExtensionContext} context
  */
-const useDefaultData = true;
-function getTimedGoals(context) {
-  context.globalState.update('data', defaultData);
+const useDefaultData = false;
+async function getTimedGoals(context) {
   let oldGoals = context.globalState.get('data').goals;
-  if (useDefaultData || oldGoals === undefined || oldGoals.length < 1) {
+  if (useDefaultData || !oldGoals || oldGoals.length < 1) {
     if (useDefaultData) {
-      context.globalState.update('data', defaultData);
+      await context.globalState.update('data', defaultData);
     } else {
-      context.globalState.update('data', {goals: [] } )
+      await context.globalState.update('data', {goals: [] } )
     }
     oldGoals = context.globalState.get('data').goals;
     if (useDefaultData) {
@@ -221,17 +219,9 @@ function getNewId(context){
 }
 
 
-
-function getIndexPanelHtml(context){
-  const scriptPath = vscode.Uri.file(
-    path.join(context.extensionPath, 'dist', 'compiled.js')
-  );
-  let scripts = fs.readFileSync(scriptPath.path.slice(1),'utf8') 
-  const stylePath = vscode.Uri.file(
-    path.join(context.extensionPath, 'index.css')
-  );
-  let styles = fs.readFileSync(stylePath.path.slice(1),'utf8')
-
+function getIndexPanelHtml(){
+  let scripts = fs.readFileSync('C:/Users/andre/Documents/GitHub/timed-goals/dist/compiled.js','utf8') 
+  let styles = fs.readFileSync('C:/Users/andre/Documents/GitHub/timed-goals/index.css','utf8')
   return `
   <html>
   <head>
@@ -243,7 +233,48 @@ function getIndexPanelHtml(context){
     </body>
     <!----Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> and <a href="https://www.flaticon.com/authors/srip" title="srip">srip</a> and <a href="https://www.flaticon.com/authors/kirill-kazachek" title="Kirill Kazachek">Kirill Kazachek</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>-->
     <script>
-    const vscode = acquireVsCodeApi();
+    function reducer() {
+      var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        goals: []
+      };
+      var action = arguments.length > 1 ? arguments[1] : undefined;
+    
+      switch (action.type) {
+        case actions.GOAL_ADD:
+          // insert command to add goals
+          var newGoal = {
+            title: action.payload.title,
+            time: action.payload.time,
+            duration: action.payload.duration,
+            complete: false,
+            id: ++lastId
+          };
+          
+          return _objectSpread(_objectSpread({}, state), {}, {
+            goals: [].concat(_toConsumableArray(state.goals), [newGoal]).sort(function (goal) {
+              return goal.time + goal.duration * 1000;
+            })
+          });
+          break;
+    
+        case actions.GOAL_COMPLETE:
+          console.log("goal finish  " + action.payload);
+          var newGoals = state.goals;
+          var index = newGoals.findIndex(function (goal) {
+            return goal.id == action.payload.id;
+          });
+          newGoals[index].complete = !newGoals[index].complete;
+          console.log(newGoals);
+          return _objectSpread(_objectSpread({}, state), {}, {
+            goals: newGoals
+          });
+          break;
+    
+        default:
+          return state;
+          break;
+      }
+    }
     `+scripts+`</script>
     <style>`+styles+`</style>
 
@@ -278,8 +309,8 @@ function viewUI(context) {
     null,
     context.subscriptions
   );
+  currentPanel.webview.html = getIndexPanelHtml();
 
-  currentPanel.webview.html = getIndexPanelHtml(context);
   // Handle messages from the webview
   currentPanel.webview.onDidReceiveMessage(
     message => {
@@ -287,9 +318,9 @@ function viewUI(context) {
         case 'createTimedGoal':
           console.log("received")
           let newId = getNewId(context);
-          let newGoal = createTimedGoal(message.payload.time, message.payload.name, message.payload.duration, message.payload.complete, newId); 
+          let newGoal = createTimedGoal(message.time, message.name, message.duration, message.complete, newId);
           addTimedGoal(context, newGoal);
-          currentPanel.webview.postMessage({ command: 'createTimedGoal', payload:{time: message.payload.time, name: message.payload.name, duration: message.payload.duration, complete: message.payload.complete, id: newId} });
+          currentPanel.webview.postMessage({ command: 'createTimedGoal', time: message.time, name: message.name, duration: message.duration, complete: message.complete, id: newId });
           return;
         case 'showTimer':
           showTimer(context);
@@ -303,10 +334,12 @@ function viewUI(context) {
           currentPanel.webview.postMessage({ command: 'completeTimedGoal', payload:{ id:message.payload.id }});
           return;
         case 'getTimedGoals':
-          let goals = getTimedGoals(context);
-          currentPanel.webview.postMessage({ command: 'getTimedGoals', goals: goals });
-          console.log("Got goals")
-          return;
+          let goals = async function() {
+            return await getTimedGoals(context);
+          }.then( () => {
+            currentPanel.webview.postMessage({ command: 'getTimedGoals', goals: goals });
+            return;
+          })
       }
     },
     undefined,
