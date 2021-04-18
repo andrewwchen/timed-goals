@@ -241,7 +241,6 @@ function getIndexPanelHtml(context){
     <!----Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> and <a href="https://www.flaticon.com/authors/srip" title="srip">srip</a> and <a href="https://www.flaticon.com/authors/kirill-kazachek" title="Kirill Kazachek">Kirill Kazachek</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>-->
     <script>
     const vscode = acquireVsCodeApi();
-
     `+scripts+`</script>
     <style>`+styles+`</style>
 
@@ -276,6 +275,7 @@ function viewUI(context) {
     null,
     context.subscriptions
   );
+
   currentPanel.webview.html = getIndexPanelHtml(context);
 
   // Handle messages from the webview
