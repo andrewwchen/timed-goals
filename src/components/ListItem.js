@@ -37,8 +37,9 @@ const ListItem = (props) => {
         })
     }
     let remainingTime=timeConverter(endTime - props.currentTime) + " remaining"
-    if (remainingTime!="Time's Up!" && (endTime - props.currentTime) < 0) {
-        remainingTime="Time's Up!"
+    const timeUpString = "Time's Up!"
+    if (remainingTime!=timeUpString && (endTime - props.currentTime) < 0) {
+        remainingTime=timeUpString
         if (endTime + 60000 < props.currentTime) deleteGoal()
     }
     return (
@@ -53,7 +54,7 @@ const ListItem = (props) => {
             <div >
                 {(hoverActive) ? (
                 <div style={{display:"inline-flex"}}>
-                    <img onClick = {showTimer} className="item-timer" src="https://i.ibb.co/S5Mt7j6/stopwatch.png" />
+                    {(!goalInfo.complete&&remainingTime!=timeUpString) ? (<img onClick = {showTimer} className="item-timer" src="https://i.ibb.co/S5Mt7j6/stopwatch.png" />) : ""}
                     <img onClick = {deleteGoal} className="item-trash" src="https://i.ibb.co/ySFzhYJ/trash.png" />
                 </div>
                 ) : ""}

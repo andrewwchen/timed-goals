@@ -7,7 +7,7 @@ const AddItem = () =>{
     let [duration, changeDuration] = useState({seconds:0,minutes:0,hours:0})
     const dispatch = useDispatch();
     const addGoal = () =>{
-        let totalSeconds = duration.seconds+duration.minutes*60+duration.hours*3600
+        let totalSeconds = Number(duration.seconds)+Number(duration.minutes)*60+Number(duration.hours)*3600
         if (name!=""&&totalSeconds>0){
             changeName("");
             vscode.postMessage({

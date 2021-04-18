@@ -53,7 +53,7 @@ var AddItem = function AddItem() {
   var dispatch = (0, _reactRedux.useDispatch)();
 
   var addGoal = function addGoal() {
-    var totalSeconds = duration.seconds + duration.minutes * 60 + duration.hours * 3600;
+    var totalSeconds = Number(duration.seconds) + Number(duration.minutes) * 60 + Number(duration.hours) * 3600;
 
     if (name != "" && totalSeconds > 0) {
       changeName("");

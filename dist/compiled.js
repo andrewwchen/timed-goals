@@ -201,7 +201,7 @@ var AddItem = function AddItem() {
   var dispatch = (0, _reactRedux.useDispatch)();
 
   var addGoal = function addGoal() {
-    var totalSeconds = duration.seconds + duration.minutes * 60 + duration.hours * 3600;
+    var totalSeconds = Number(duration.seconds) + Number(duration.minutes) * 60 + Number(duration.hours) * 3600;
 
     if (name != "" && totalSeconds > 0) {
       changeName("");
@@ -375,9 +375,10 @@ var ListItem = function ListItem(props) {
   };
 
   var remainingTime = (0, _goalfunctionality.timeConverter)(endTime - props.currentTime) + " remaining";
+  var timeUpString = "Time's Up!";
 
-  if (remainingTime != "Time's Up!" && endTime - props.currentTime < 0) {
-    remainingTime = "Time's Up!";
+  if (remainingTime != timeUpString && endTime - props.currentTime < 0) {
+    remainingTime = timeUpString;
     if (endTime + 60000 < props.currentTime) deleteGoal();
   }
 
@@ -408,11 +409,11 @@ var ListItem = function ListItem(props) {
     style: {
       display: "inline-flex"
     }
-  }, /*#__PURE__*/_react["default"].createElement("img", {
+  }, !goalInfo.complete && remainingTime != timeUpString ? /*#__PURE__*/_react["default"].createElement("img", {
     onClick: showTimer,
     className: "item-timer",
     src: "https://i.ibb.co/S5Mt7j6/stopwatch.png"
-  }), /*#__PURE__*/_react["default"].createElement("img", {
+  }) : "", /*#__PURE__*/_react["default"].createElement("img", {
     onClick: deleteGoal,
     className: "item-trash",
     src: "https://i.ibb.co/ySFzhYJ/trash.png"
@@ -602,7 +603,6 @@ function reducer() {
           complete: goal.complete
         };
       });
-      console.log(goals);
       return _objectSpread(_objectSpread({}, state), {}, {
         goals: goals
       });

@@ -74,7 +74,6 @@ function reducer() {
           complete: goal.complete
         };
       });
-      console.log(goals);
       return _objectSpread(_objectSpread({}, state), {}, {
         goals: goals
       });

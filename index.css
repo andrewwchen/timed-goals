@@ -47,7 +47,8 @@ body {
 }
 .item-info{
     position:relative;
-    left:12px
+    left:12px;
+    width:100%
 }
 .item-name {
     font-size: 18px;
@@ -80,19 +81,29 @@ body {
 }
 #additem-input {
     width:100%;
+    max-width:360px;
     height:40px;
     border-radius:2px;
     border:0;
+    background-color:#ddd;
+    padding: 4px 6px
 }
 #additem-time {
-    display:inline-flex
+    display:inline-flex;
+    justify-content:space-evenly;
+    width:100%;
+    max-width:180px;
+    margin-left:12px;
+    
 }
 #additem-time > input {
     height:40px;
-    width:32px;
+    width:40px;
     margin-right:16px;
     border-radius:2px;
-    border:0
+    border:0;
+    background-color:#ddd;
+    padding:2px 4px 2px 8px;
 }
 #additem-time-label {
     font-size:18px;
