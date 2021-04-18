@@ -1,3 +1,4 @@
+export const TIMER_START = "timerStarted"
 export const LOAD_GOALS = "goalsLoaded"
 export const GOAL_ADD = "goalAdded";
 export const GOAL_COMPLETE = "goalCompleted";
