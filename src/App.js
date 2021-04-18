@@ -39,9 +39,9 @@ const List = (props) =>{
         dispatch(goalsLoaded())
         window.addEventListener('message',event =>{
             const message = event.data
-            console.log(message)
             switch (message.command) {
                 case "createTimedGoal":
+                    console.log(message.payload)
                     dispatch(goalAdded(message.payload.name,message.payload.duration,message.payload.time,message.payload.id,message.payload.complete))
                     break;
                 case "deleteTimedGoal":

@@ -186,7 +186,9 @@ function completeTimedGoal(id, context) {
  */
 const useDefaultData = false;
 async function getTimedGoals(context) {
+  console.log("get timed goals")
   let oldGoals = context.globalState.get('data').goals;
+  console.log(oldGoals)
   if (useDefaultData || !oldGoals || oldGoals.length < 1) {
     if (useDefaultData) {
       await context.globalState.update('data', defaultData);
@@ -283,11 +285,10 @@ function viewUI(context) {
     message => {
       switch (message.command) {
         case 'createTimedGoal':
-          
           let newId = getNewId(context);
-          let newGoal = createTimedGoal(message.time, message.name, message.duration, message.complete, newId);
+          let newGoal = createTimedGoal(message.payload.time, message.payload.name, message.payload.duration, message.payload.complete, newId);
           addTimedGoal(context, newGoal);
-          currentPanel.webview.postMessage({ command: 'createTimedGoal', time: message.time, name: message.name, duration: message.duration, complete: message.complete, id: newId });
+          currentPanel.webview.postMessage({ command: 'createTimedGoal', payload: {time: message.payload.time, name: message.payload.name, duration: message.payload.duration, complete: message.payload.complete, id: newId }});
           return;
         case 'showTimer':
           showTimer(context);
@@ -301,7 +302,7 @@ function viewUI(context) {
           currentPanel.webview.postMessage({ command: 'completeTimedGoal', payload:{ id:message.payload.id }});
           return;
         case 'getTimedGoals':
-          console.log("received")
+          console.log(message)
           let goals = async function() {
             return await getTimedGoals(context);
           }.then( () => {

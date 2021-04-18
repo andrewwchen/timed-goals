@@ -13,6 +13,7 @@ export default function reducer(state={currentTime:Date.now(),goals:{}},action){
                 duration:action.payload.duration,
                 complete:action.payload.complete,
             }
+            console.log(newGoals)
             newGoals = Object.assign(newGoals,state.goals)
             console.log(newGoals)
             return {
