@@ -81,25 +81,26 @@ function createProgressBar(goal) {
 showTimer: A function that displays a live timer for the most pressing goal
 vscode context context
 */
-function showTimer(context) {
-  let mostPressing = undefined;
-  let oldGoals = getTimedGoals(context);
-  for (let i=0; i < oldGoals.length; i++) {
-    if (!oldGoals[i].complete) {
-      console.log("1 + " + oldGoals[i].name);
-      // start time in future
-      if (remainingTime(oldGoals[i]) > 0) {
-        console.log("2 + " + oldGoals[i].name);
-        if (!mostPressing || remainingTime(mostPressing) > remainingTime(oldGoals[i])) {
-          console.log("3 + " + oldGoals[i].name);
-          mostPressing = oldGoals[i];
-        }
-      }
+async function showTimer(context, id) {
+  // let mostPressing = undefined;
+  // let oldGoals = getTimedGoals(context);
+  // for (let i=0; i < oldGoals.length; i++) {
+  //   if (!oldGoals[i].complete) {
+  //     console.log("1 + " + oldGoals[i].name);
+  //     // start time in future
+  //     if (remainingTime(oldGoals[i]) > 0) {
+  //       console.log("2 + " + oldGoals[i].name);
+  //       if (!mostPressing || remainingTime(mostPressing) > remainingTime(oldGoals[i])) {
+  //         console.log("3 + " + oldGoals[i].name);
+  //         mostPressing = oldGoals[i];
+  //       }
+  //     }
       
-    }
-  }
+  //   }
+  // }
+  let oldGoals = await getTimedGoals(context);
+  let mostPressing = oldGoals.filter((goal)=>goal.id==id)[0]
   if (mostPressing) {
-    console.log(mostPressing.name)
     createProgressBar(mostPressing);
   } else {
     console.log("none were most pressing")
@@ -187,7 +188,6 @@ function completeTimedGoal(id, context) {
 const useDefaultData = false;
 async function getTimedGoals(context) {
   let oldGoals = context.globalState.get('data').goals;
-  console.log(oldGoals)
   if (useDefaultData || !oldGoals || oldGoals.length < 1) {
     if (useDefaultData) {
       await context.globalState.update('data', defaultData);
@@ -245,10 +245,10 @@ function getIndexPanelHtml(context){
     <!----Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> and <a href="https://www.flaticon.com/authors/srip" title="srip">srip</a> and <a href="https://www.flaticon.com/authors/kirill-kazachek" title="Kirill Kazachek">Kirill Kazachek</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>-->
     <script>
     const vscode = acquireVsCodeApi();
-    const addUrl =  "${staticPath}" + "/add.png";
-    const checkUrl =  "${staticPath}" + "/check.png";
-    const moreUrl =  "${staticPath}" + "/more.png";
-    const trashUrl =  "${staticPath}" + "/trash.png";
+    //const addUrl =  "${staticPath}" + "/add.png";
+    //const checkUrl =  "${staticPath}" + "/check.png";
+    //const moreUrl =  "${staticPath}" + "/more.png";
+    //const trashUrl =  "${staticPath}" + "/trash.png";
     `+scripts+`</script>
     <style>`+styles+`</style>
 
@@ -271,10 +271,11 @@ async function viewUI(context) {
       'Timed Goals', // Title of the panel displayed to the user
       vscode.ViewColumn.One, // Editor column to show the new webview panel in.
       {
+        //localResourceRoots not working, had to import files thru fs and online
         localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath,'static'))],
         enableScripts: true,
         
-      } // Webview options. More on these later.
+      } 
     );
   }
   // Reset when the current panel is closed
@@ -299,7 +300,7 @@ async function viewUI(context) {
           currentPanel.webview.postMessage({ command: 'createTimedGoal', payload: {time: message.payload.time, name: message.payload.name, duration: message.payload.duration, complete: message.payload.complete, id: newId }});
           return;
         case 'showTimer':
-          showTimer(context);
+          showTimer(context,message.payload.id);
           return;
         case 'deleteTimedGoal':
           deleteTimedGoal(message.payload.id, context);

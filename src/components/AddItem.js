@@ -7,17 +7,19 @@ const AddItem = () =>{
     let [duration, changeDuration] = useState({seconds:0,minutes:0,hours:0})
     const dispatch = useDispatch();
     const addGoal = () =>{
-        changeName("");
         let totalSeconds = duration.seconds+duration.minutes*60+duration.hours*3600
-        vscode.postMessage({
-            command: 'createTimedGoal',
-            payload: {
-                time: Date.now(),
-                name:name,
-                duration: totalSeconds,
-                complete:false
-            }
-        })
+        if (name!=""&&totalSeconds>0){
+            changeName("");
+            vscode.postMessage({
+                command: 'createTimedGoal',
+                payload: {
+                    time: Date.now(),
+                    name:name,
+                    duration: totalSeconds,
+                    complete:false
+                }
+            })
+        }
     }
     const handleInput = event =>{
         changeName(event.target.value);
@@ -32,11 +34,13 @@ const AddItem = () =>{
             </div>
             <div className="item-info"> 
                 <input id="additem-input" onChange={handleInput} value={name} placeholder="Add New Goal" type="text" />
+                <div id="additem-time-label">Insert Goal Duration</div>
+                <div id="additem-time-sublabel">Hours / Minutes / Seconds</div>
                 <div id ="additem-time">
-                    <input onChange={handleHour} value={duration.hours} placeholder="Hours" type="number"></input>
-                    <input onChange={handleMinute} value={duration.minutes} placeholder="Minutes" type="number"></input>
-                    <input onChange={handleSecond} value={duration.seconds} placeholder="Hours" type="number"></input>
-                    </div>
+                    <input onChange={handleHour} value={duration.hours} placeholder="Hours" type="number" min="0"></input>
+                    <input onChange={handleMinute} value={duration.minutes} placeholder="Minutes" type="number" min="0"></input>
+                    <input onChange={handleSecond} value={duration.seconds} placeholder="Seconds" type="number" min="0"></input>
+                </div>
             </div>
         </div>
     )
