@@ -2,6 +2,7 @@
 const fs = require('fs');
 const vscode = require('vscode');
 const defaultData = require('./defaultData.json');
+const path = require('path')
 
 /*
 msToStr: A helper function that converts time in milliseconds to formatted
@@ -220,8 +221,14 @@ function getNewId(context){
 
 
 function getIndexPanelHtml(){
-  let scripts = fs.readFileSync('C:/Users/andre/Documents/GitHub/timed-goals/dist/compiled.js','utf8') 
-  let styles = fs.readFileSync('C:/Users/andre/Documents/GitHub/timed-goals/index.css','utf8')
+  const scriptPath = vscode.Uri.file(
+    path.join(context.extensionPath, 'dist', 'compiled.js')
+  );
+  let scripts = fs.readFileSync(scriptPath.path.slice(1),'utf8') 
+  const stylePath = vscode.Uri.file(
+    path.join(context.extensionPath, 'index.css')
+  );
+  let styles = fs.readFileSync(stylePath.path.slice(1),'utf8')
   return `
   <html>
   <head>
