@@ -11,7 +11,7 @@ const ListItem = (props) => {
     return (
         <div className="list-item"> 
             <div className="item-check" onClick={completeGoal}>
-                {(props.complete) ? (<img className = "item-check-image" src="static/check.png" />) : ""} 
+                {(props.complete) ? (<img className = "item-check-image" src="https://www.dropbox.com/s/hmh16o5mtj73r52/check.png?raw=1" />) : ""} 
             </div>
             <div className="item-info">
                 <div className="item-title">{props.title}</div>

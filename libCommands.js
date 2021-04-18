@@ -1,6 +1,7 @@
 // VSCode import
 const fs = require('fs');
 const vscode = require('vscode');
+const path = require('path');
 const defaultData = require('./defaultData.json');
 
 /*
@@ -214,19 +215,24 @@ function getNewId(context){
 }
 
 
-function getIndexPanelHtml(){
-  return `<html !DOCTYPE=html>
-    <head>
+function getIndexPanelHtml(addPngSrc, checkPngSrc, morePngSrc){
+  let scripts = fs.readFileSync('C:/Users/andre/Documents/GitHub/timed-goals/dist/compiled.js','utf8') 
+  let styles = fs.readFileSync('C:/Users/andre/Documents/GitHub/timed-goals/index.css','utf8')
+  return `
+  <html>
+  <head>
         <meta charset="utf-8">
         <title>Timed Goals</title>
-        <link rel="stylesheet" href="index.css">
     </head>
     <body>
-        <div id="react-content"></div>
+        <div id="react-content"><h1>HELLO </h1> </div>
     </body>
     <!----Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> and <a href="https://www.flaticon.com/authors/srip" title="srip">srip</a> and <a href="https://www.flaticon.com/authors/kirill-kazachek" title="Kirill Kazachek">Kirill Kazachek</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>-->
-    <script src="dist/compiled.js"></script>
-</html>`
+    <script>`+scripts+`</script>
+    <style>`+styles+`</style>
+
+  </html>
+  `
 }
 
 let currentPanel = undefined;
@@ -243,7 +249,9 @@ function viewUI(context) {
       'timedGoals', // Identifies the type of the webview. Used internally
       'Timed Goals', // Title of the panel displayed to the user
       vscode.ViewColumn.One, // Editor column to show the new webview panel in.
-      {} // Webview options. More on these later.
+      {
+        enableScripts: true
+      } // Webview options. More on these later.
     );
   }
   // Reset when the current panel is closed
@@ -254,7 +262,22 @@ function viewUI(context) {
     null,
     context.subscriptions
   );
-  currentPanel.webview.html = getIndexPanelHtml();
+  // Get path to resource on disk
+  const add = vscode.Uri.file(
+    path.join(context.extensionPath, 'static', 'add.png')
+  );
+  const check = vscode.Uri.file(
+    path.join(context.extensionPath, 'static', 'check.png')
+  );
+  const more = vscode.Uri.file(
+    path.join(context.extensionPath, 'static', 'more.png')
+  );
+
+  // And get the special URI to use with the webview
+  const addPngSrc = currentPanel.webview.asWebviewUri(add);
+  const checkPngSrc = currentPanel.webview.asWebviewUri(check);
+  const morePngSrc = currentPanel.webview.asWebviewUri(more);
+  currentPanel.webview.html = getIndexPanelHtml(addPngSrc, checkPngSrc, morePngSrc);
 }
 
 module.exports = {

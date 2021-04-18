@@ -22,7 +22,7 @@ const App = (props) => {
                 {goals}
                 < AddItem />
             </div>
-            <img id = "settings" src="static/more.png" />
+            <img id = "settings" src="https://www.dropbox.com/s/sv2qx0b753sijyz/more.png?raw=1" />
         </div>
     );
 };
