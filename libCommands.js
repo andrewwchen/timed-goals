@@ -185,15 +185,17 @@ function completeTimedGoal(id, context) {
 /**
  * @param {vscode.ExtensionContext} context
  */
+const useDefaultData = false;
 function getTimedGoals(context) {
   let oldGoals = context.globalState.get('data').goals;
-  if (true || !oldGoals || oldGoals.length < 1) {
+  if (useDefaultData || !oldGoals || oldGoals.length < 1) {
     context.globalState.update('data', defaultData);
     oldGoals = context.globalState.get('data').goals;
-    for (let i=0; i < oldGoals.length; i++) {
-      oldGoals[i].time = Date.now();
+    if (useDefaultData) {
+      for (let i=0; i < oldGoals.length; i++) {
+        oldGoals[i].time = Date.now();
+      }
     }
-    
   }
   return oldGoals;
 }
@@ -215,7 +217,7 @@ function getNewId(context){
 }
 
 
-function getIndexPanelHtml(addPngSrc, checkPngSrc, morePngSrc){
+function getIndexPanelHtml(){
   let scripts = fs.readFileSync('C:/Users/andre/Documents/GitHub/timed-goals/dist/compiled.js','utf8') 
   let styles = fs.readFileSync('C:/Users/andre/Documents/GitHub/timed-goals/index.css','utf8')
   return `
@@ -305,22 +307,36 @@ function viewUI(context) {
     null,
     context.subscriptions
   );
-  // Get path to resource on disk
-  const add = vscode.Uri.file(
-    path.join(context.extensionPath, 'static', 'add.png')
-  );
-  const check = vscode.Uri.file(
-    path.join(context.extensionPath, 'static', 'check.png')
-  );
-  const more = vscode.Uri.file(
-    path.join(context.extensionPath, 'static', 'more.png')
-  );
+  currentPanel.webview.html = getIndexPanelHtml();
 
-  // And get the special URI to use with the webview
-  const addPngSrc = currentPanel.webview.asWebviewUri(add);
-  const checkPngSrc = currentPanel.webview.asWebviewUri(check);
-  const morePngSrc = currentPanel.webview.asWebviewUri(more);
-  currentPanel.webview.html = getIndexPanelHtml(addPngSrc, checkPngSrc, morePngSrc);
+  // Handle messages from the webview
+  currentPanel.webview.onDidReceiveMessage(
+    message => {
+      switch (message.command) {
+        case 'createTimedGoal':
+          let newId = getNewId(context);
+          let newGoal = createTimedGoal(message.time, message.name, message.duration, message.complete, newId);
+          addTimedGoal(context, newGoal);
+          currentPanel.webview.postMessage({ command: 'createTimedGoal', time: message.time, name: message.name, duration: message.duration, complete: message.complete, id: newId });
+          return;
+        case 'showTimer':
+          showTimer(context);
+          return;
+        case 'deleteTimedGoal':
+          deleteTimedGoal(message.id, context);
+          return;
+        case 'completeTimedGoal':
+          completeTimedGoal(message.id, context);
+          return;
+        case 'getTimedGoals':
+          let goals = getTimedGoals(context);
+          currentPanel.webview.postMessage({ command: 'getTimedGoals', goals: goals });
+          return;
+      }
+    },
+    undefined,
+    context.subscriptions
+  );
 }
 
 module.exports = {
