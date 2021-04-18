@@ -331,9 +331,12 @@ function viewUI(context) {
           completeTimedGoal(message.id, context);
           return;
         case 'getTimedGoals':
-          let goals = getTimedGoals(context);
-          currentPanel.webview.postMessage({ command: 'getTimedGoals', goals: goals });
-          return;
+          let goals = async function() {
+            return await getTimedGoals(context);
+          }.then( () => {
+            currentPanel.webview.postMessage({ command: 'getTimedGoals', goals: goals });
+            return;
+          })
       }
     },
     undefined,
