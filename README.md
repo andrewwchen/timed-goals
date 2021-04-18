@@ -1,22 +1,22 @@
-# timedgoals README
+# Timed Goals VSCode Extension
 
-This is the README for your extension "timedgoals". After writing up a brief description, we recommend including the following sections.
+## Inspiration
 
-## Features
+We were inspired by the Pomodoro Technique for time management.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## How we built it
 
-For example if there is an image subfolder under your extension project workspace:
+
 
 \!\[feature X\]\(images/feature-x.png\)
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+> Tip: 
 
-## Requirements
+## Challenges we ran into
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
 
-## Extension Settings
+
+## Accomplishments that we're proud of
 
 Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
 
@@ -27,25 +27,20 @@ This extension contributes the following settings:
 * `myExtension.enable`: enable/disable this extension
 * `myExtension.thing`: set to `blah` to do something
 
-## Known Issues
+## What we learned
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
 
-## Release Notes
+## What's next for Timed Goals
 
-Users appreciate release notes as you update your extension.
 
-### 1.0.0
+## Built With
+Javascript, Node.js, React
 
-Initial release of ...
+## Try it out
+* [GitHub Repo](https://github.com/chenmasterandrew/timed-goals)
+* [Visual Studio Marketplace]()
 
-### 1.0.1
 
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -56,10 +51,3 @@ Added features X, Y, and Z.
 * Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
 * Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
 * Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**

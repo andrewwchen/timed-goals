@@ -115,8 +115,18 @@ function createTimedGoal(time, name, duration, complete){
         }
 }
 
+function viewUI() {
+  const panel = vscode.window.createWebviewPanel(
+    'timedGoals', // Identifies the type of the webview. Used internally
+    'Timed Goals', // Title of the panel displayed to the user
+    vscode.ViewColumn.One, // Editor column to show the new webview panel in.
+    {} // Webview options. More on these later.
+  );
+}
+
 module.exports = {
     createTimedGoal,
     addTimedGoal,
-    createProgressBar
+    createProgressBar,
+    viewUI
 }

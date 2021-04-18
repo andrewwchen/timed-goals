@@ -12,7 +12,9 @@
 	"activationEvents": [
 		"onCommand:timedgoals.helloWorld",
 		"onCommand:timedgoals.createProgressBar",
-		"onCommand:timedgoals.testCommand"
+		"onCommand:timedgoals.testCommand",
+		"onCommand:timedgoals.viewUI",
+		"*"
 	],
 	"main": "./extension.js",
 	"contributes": {
@@ -28,6 +30,10 @@
 			{
 				"command": "timedgoals.testCommand",
 				"title": "Test Command"
+			},
+			{
+				"command": "timedgoals.viewUI",
+				"title": "Timed Goals: View UI"
 			}
 		]
 	},
