@@ -1,14 +1,12 @@
 // VSCode import
 const fs = require('fs');
 const vscode = require('vscode');
-const path = require('path');
 const defaultData = require('./defaultData.json');
 
 /*
 msToStr: A helper function that converts time in milliseconds to formatted
          hours, minutes, seconds
 int ms
-
 referenced: https://stackoverflow.com/questions/13601737/how-to-convert-milliseconds-into-a-readable-date-minutesseconds-format
 */
 function msToStr(ms) {
@@ -189,7 +187,11 @@ const useDefaultData = false;
 function getTimedGoals(context) {
   let oldGoals = context.globalState.get('data').goals;
   if (useDefaultData || !oldGoals || oldGoals.length < 1) {
-    context.globalState.update('data', defaultData);
+    if (useDefaultData) {
+      context.globalState.update('data', defaultData);
+    } else {
+      context.globalState.update('data', {goals: [] } )
+    }
     oldGoals = context.globalState.get('data').goals;
     if (useDefaultData) {
       for (let i=0; i < oldGoals.length; i++) {
@@ -340,12 +342,6 @@ function viewUI(context) {
 }
 
 module.exports = {
-  createTimedGoal,
-  addTimedGoal,
   showTimer,
-  deleteTimedGoal,
-  completeTimedGoal,
-  getTimedGoals,
-  getNewId,
   viewUI
 }
