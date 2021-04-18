@@ -40,11 +40,11 @@ export default function reducer(state={currentTime:Date.now(),goals:{}},action){
             }
             break;
         case actions.LOAD_GOALS:
-            vscode.postMessage({
-                command: 'getTimedGoals'
-            })
-            console.log("LOADED")
-            return state
+            return {
+                ...state,
+                goals:action.payload.goals
+            }
+            
         default: return state;
     break;
     }

@@ -10,7 +10,7 @@ const libCommands = require('./libCommands')
 /**
  * @param {vscode.ExtensionContext} context
  */
-function activate(context) {
+async function activate(context) {
 
 	// Create global state on startup
 	// context.globalState.update('data', {goals:[ ]});
@@ -34,7 +34,7 @@ function activate(context) {
 	// Push all functions so that VSCode knows about them
 	context.subscriptions.push(viewUI);
 	context.subscriptions.push(showTimer);
-	libCommands.viewUI(context);
+	await libCommands.viewUI(context);
 }
 
 

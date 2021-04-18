@@ -25,7 +25,7 @@ class App extends React.Component{
         return (
             <div id = "react-container">
                 < List currentTime={this.state.currentTime}/>
-                <img id = "settings" src="https://www.dropbox.com/s/rludca9oo0wld0h/more.png?dl=0" />
+                <img id = "settings" src="https://i.ibb.co/RB57Dty/more.png" />
             </div>
         );
     }
@@ -36,12 +36,16 @@ const List = (props) =>{
     const goals = useSelector(state => state.goals)
     const dispatch = useDispatch()
     useEffect(()=>{
-        dispatch(goalsLoaded())
+        vscode.postMessage({
+            command: 'getTimedGoals'
+        })
         window.addEventListener('message',event =>{
             const message = event.data
             switch (message.command) {
+                case "getTimedGoals":
+                    dispatch(goalsLoaded(message.payload.goals))
+                    break;
                 case "createTimedGoal":
-                    console.log(message.payload)
                     dispatch(goalAdded(message.payload.name,message.payload.duration,message.payload.time,message.payload.id,message.payload.complete))
                     break;
                 case "deleteTimedGoal":

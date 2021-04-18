@@ -1,7 +1,10 @@
 import * as actions from './actionTypes.js'
 
-export const goalsLoaded = () =>({
-    type:actions.LOAD_GOALS
+export const goalsLoaded = (goals) =>({
+    type:actions.LOAD_GOALS,
+    payload: {
+        goals:goals
+    }
 })
 export const goalAdded = (name, duration, time, id, complete) =>({
     type:actions.GOAL_ADD,

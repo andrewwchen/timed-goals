@@ -28,6 +28,7 @@ body {
     display:inline-flex;
     margin-bottom:12px;
     height:64px;
+    position:relative;
 }
 .list-item > div {
     margin: auto 0
@@ -55,6 +56,14 @@ body {
 }
 .item-time {
     font-size:14px
+}
+.item-trash {
+    width:36px;
+    height:36px;
+    top:14px;
+    position:absolute;
+    right:36px;
+    cursor:pointer;
 }
 #additem-add {
     width:24px;

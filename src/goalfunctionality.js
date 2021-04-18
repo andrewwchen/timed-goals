@@ -8,6 +8,6 @@ export const timeConverter= (time) =>{
     let seconds = Math.floor((time%60000)/1000)
     if (hours > 0 ) return hours + " hours" + ((!minutes==0) ? (" and " + minutes + " minutes") : "") 
     else if (minutes > 0 ) return minutes + " minutes" + ((!seconds==0) ? (" and " + seconds + " seconds") : "")
-    else if (seconds > 0 ) return seconds + " seconds"
+    else if (seconds >= 0 ) return seconds + " seconds"
     else "No Time"
 }

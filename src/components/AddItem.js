@@ -28,7 +28,7 @@ const AddItem = () =>{
     return (
         <div className="list-item" id = "additem"> 
             <div className = "item-check" onClick={addGoal}>
-                <img id = "additem-add" src = "https://www.dropbox.com/s/4fjoqfmso9izyjp/add.png"/>
+                <img id = "additem-add" src ="https://i.ibb.co/2FxBF4X/add.png"/>
             </div>
             <div className="item-info"> 
                 <input id="additem-input" onChange={handleInput} value={name} placeholder="Add New Goal" type="text" />

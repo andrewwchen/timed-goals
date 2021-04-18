@@ -186,7 +186,6 @@ function completeTimedGoal(id, context) {
  */
 const useDefaultData = false;
 async function getTimedGoals(context) {
-  console.log("get timed goals")
   let oldGoals = context.globalState.get('data').goals;
   console.log(oldGoals)
   if (useDefaultData || !oldGoals || oldGoals.length < 1) {
@@ -231,6 +230,9 @@ function getIndexPanelHtml(context){
     path.join(context.extensionPath, 'index.css')
   );
   let styles = fs.readFileSync(stylePath.path.slice(1),'utf8')
+  const staticPath = vscode.Uri.file(
+    path.join(context.extensionPath,"static")
+  ).path.slice(1)
   return `
   <html>
   <head>
@@ -243,6 +245,10 @@ function getIndexPanelHtml(context){
     <!----Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> and <a href="https://www.flaticon.com/authors/srip" title="srip">srip</a> and <a href="https://www.flaticon.com/authors/kirill-kazachek" title="Kirill Kazachek">Kirill Kazachek</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>-->
     <script>
     const vscode = acquireVsCodeApi();
+    const addUrl =  "${staticPath}" + "/add.png";
+    const checkUrl =  "${staticPath}" + "/check.png";
+    const moreUrl =  "${staticPath}" + "/more.png";
+    const trashUrl =  "${staticPath}" + "/trash.png";
     `+scripts+`</script>
     <style>`+styles+`</style>
 
@@ -251,7 +257,7 @@ function getIndexPanelHtml(context){
 }
 
 let currentPanel = undefined;
-function viewUI(context) {
+async function viewUI(context) {
   const columnToShowIn = vscode.window.activeTextEditor
     ? vscode.window.activeTextEditor.viewColumn
     : undefined;
@@ -265,7 +271,9 @@ function viewUI(context) {
       'Timed Goals', // Title of the panel displayed to the user
       vscode.ViewColumn.One, // Editor column to show the new webview panel in.
       {
-        enableScripts: true
+        localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath,'static'))],
+        enableScripts: true,
+        
       } // Webview options. More on these later.
     );
   }
@@ -282,7 +290,7 @@ function viewUI(context) {
 
   // Handle messages from the webview
   currentPanel.webview.onDidReceiveMessage(
-    message => {
+    async (message) => {
       switch (message.command) {
         case 'createTimedGoal':
           let newId = getNewId(context);
@@ -303,12 +311,9 @@ function viewUI(context) {
           return;
         case 'getTimedGoals':
           console.log(message)
-          let goals = async function() {
-            return await getTimedGoals(context);
-          }.then( () => {
-            currentPanel.webview.postMessage({ command: 'getTimedGoals', goals: goals });
-            return;
-          })
+          let goals = await getTimedGoals(context);
+          currentPanel.webview.postMessage({ command: 'getTimedGoals', payload:{goals: goals }});
+          return;
       }
     },
     undefined,
