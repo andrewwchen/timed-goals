@@ -2,7 +2,7 @@
 	"name": "timedgoals",
 	"displayName": "TimedGoals",
 	"description": "Over the course of many hours of programming, it’s easy to lose your focus. You may find yourself inefficiently working without a particular goal, unwittingly creating unwanted features without consulting others, or even neglecting yourself. Achieving a state of focus often entails an attention to detail and commitment to productivity that can be hard to cultivate under the often stressful situations of software development. Whether you lose your focus over the course of many hours of work or find yourself with too many tasks to juggle at once, there’s always something keeping you from operating at peak performance. Timed-Goals is the solution. A task management program that runs inside of Visual Studio Code, Timed-Goals allows you to keep your project management objectives only inches of the screen away from the code you’re writing, literally putting you closer to your goals. Set timed reminders and todos that keep you on track, without the need for external software or an internet connection. With Timed-Goals, the power to be a productive developer is back in your hands. Julian George, Andrew Chen, and Alphonso Bradham's submission for HackDartmouth 2021",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"publisher": "chenmasterandrew",
 	"engines": {
 		"vscode": "^1.55.0"
