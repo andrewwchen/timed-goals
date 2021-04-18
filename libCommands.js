@@ -1,52 +1,76 @@
 // VSCode import
 const vscode = require('vscode');
 
-// https://stackoverflow.com/questions/13601737/how-to-convert-milliseconds-into-a-readable-date-minutesseconds-format
+/*
+msToStr: A helper function that converts time in milliseconds to formatted
+         hours, minutes, seconds
+
+int ms
+
+referenced: https://stackoverflow.com/questions/13601737/how-to-convert-milliseconds-into-a-readable-date-minutesseconds-format
+*/
 function msToStr(ms) {
   const hours = Math.floor(ms / 3600000); // 1 Hour = 36000 Milliseconds
   const minutes = Math.floor((ms % 3600000) / 60000); // 1 Minutes = 60000 Milliseconds
   const seconds = Math.floor(((ms % 360000) % 60000) / 1000); // 1 Second = 1000 Milliseconds
-  const string = hours + " hours " + minutes + " minutes " + seconds + "seconds";
+  
+  var string;
+  if (hours > 0) { // only hours and minutes displayed
+    string = `${hours} hours ${minutes} minutes`;
+  }
+  else if (minutes > 0) { // only minutes displayed
+    string = `${minutes} minutes`;
+  }
+  else { // only seconds displayed
+    string = `${Math.max(0, seconds)} seconds`;
+  }
   return string;
 }
 
+/*
+remainingTime: A helper function that calculates a goal's time remaining
+               in seconds
+
+Object goal
+*/
 function remainingTime(goal) {
-  let now = 25334;
-  let timeElapsed = now - goal.startTime;
-  let timeRemaining = goal.duration - timeElapsed;
+  let now = Date.now();
+  let timeElapsed = now - goal.time;
+  let timeRemaining = goal.duration * 1000 - timeElapsed;
   return timeRemaining;
 }
 
+/*
+createProgressBar: A function that displays a live timer for a goal
+
+Object goal
+*/
 function createProgressBar(goal) {
   vscode.window.withProgress({
     location: vscode.ProgressLocation.Notification,
-    title: `${goal.name} ${msToStr(remainingTime(goal))}`,
+    title: goal.name,
     cancellable: true
   }, (progress, token) => {
 
-    //const increment = 1 / (remainingTime(goal) / 1000)
+    const durationNow = remainingTime(goal);
 
     token.onCancellationRequested(() => {
       console.log(`${goal.name}'s progress bar was cancelled.`);
     });
 
-    //let progressing = true;
     progress.report({ increment: 0 });
-    /*
-    const loop = async() => {
-      while (progressing) {
-        await new Promise(r => setTimeout(r, 1000));
-        progress.report({ increment: increment, message: `${goal.name} ${msToStr(remainingTime(goal))}` });
-        if (remainingTime(goal) <= 0) {
-          progressing = false;
-        }
-      }
-    }*/
+    
+    for (let i=1; i<=1000; i++) {
+      setTimeout(() => {
+        progress.report({ increment: 0.1, message: `${msToStr(remainingTime(goal))}` });
+      }, durationNow * i * .001);
+    }
+
     const p = new Promise(resolve => {
       setTimeout(() => {
-        //progressing = false;
         resolve();
-      }, 5000);
+        vscode.window.showInformationMessage(`${goal.name}: time's up`)
+      }, durationNow);
     });
 
     return p;
@@ -76,9 +100,9 @@ function addTimedGoal(context, newTimedGoal){
 /*
 * createTimedGoal: Creates a json object to be saved to the global data store
 * from a list of passed parameters
-* @param time Date
+* @param time Date (starttime in ms unix)
 * @param name String
-* @param duration int
+* @param duration int (seconds)
 * @param complete boolean
 */
 
