@@ -57,7 +57,7 @@ function createProgressBar(goal) {
       console.log(`${goal.name}'s progress bar was cancelled.`);
     });
 
-    progress.report({ increment: 0 });
+    progress.report({ increment: 0, message: `${msToStr(remainingTime(goal))}` });
     
     for (let i=1; i<=1000; i++) {
       setTimeout(() => {
@@ -204,6 +204,7 @@ async function getTimedGoals(context) {
       }
     }
   }
+  console.log(oldGoals)
   return oldGoals;
 }
 
