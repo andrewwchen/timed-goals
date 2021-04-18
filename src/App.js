@@ -7,25 +7,45 @@ import reducer from './redux/reducers.js';
 import ListItem from './components/ListItem';
 import AddItem from './components/AddItem';
 
-const App = (props) => {
-    let goals = useSelector(state => state.goals)
+class App extends React.Component{
+    constructor (props) {
+        super(props)
+        this.state={currentTime:Date.now()}
+    }
+    componentDidMount() {
+        setInterval(()=>{
+            this.setState({currentTime:Date.now()});
+        },1000)
+        window.addEventListener('message',event =>{
+            const message = event.data
+        })
+    }
     //goals = goals.filter((goal) => goal.complete)
-    goals = goals.map(
-        (goal) => 
-        <ListItem title={goal.title} time={goal.time} complete={goal.complete} key={goal.id} id={goal.id} />
-    )
-    console.log(goals)
+    // converts object to sorted array of goal IDs
+    render() {
+        return (
+            <div id = "react-container">
+                < List currentTime={this.state.currentTime}/>
+                <img id = "settings" src="https://www.dropbox.com/s/rludca9oo0wld0h/more.png?dl=0" />
+            </div>
+        );
+    }
+    
+};
+
+const List = (props) =>{
+    const goals = useSelector(state => state.goals)
+    let newGoals = Object.keys(goals).sort((a,b)=>b-a)
+    console.log(props.currentTime)
+    newGoals = newGoals.map((goalID)=>(<ListItem key={goalID} id = {goalID} currentTime={props.currentTime}/>))
     return (
-        <div id = "react-container">
-            <div id ="goal-list">
+        <div id ="goal-list">
                 <div id = "goal-title"> Your Goals </div>
-                {goals}
+                {newGoals}
                 < AddItem />
             </div>
-            <img id = "settings" src="https://www.dropbox.com/s/sv2qx0b753sijyz/more.png?raw=1" />
-        </div>
-    );
-};
+    )
+}
 
 const store = createStore(
     reducer, 

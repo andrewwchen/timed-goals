@@ -1,36 +1,49 @@
 import * as actions from './actionTypes.js'
 let lastId=0;
 
-export default function reducer(state={goals:[]},action){
+export default function reducer(state={currentTime:Date.now(),goals:{}},action){
+    let id, newGoals
     switch (action.type) {
         case actions.GOAL_ADD:
             // insert command to add goals
-            let newGoal = {
-                title: action.payload.title, 
+            newGoals = {}
+            newGoals[++lastId] = {
+                name: action.payload.name, 
                 time: action.payload.time,
                 duration:action.payload.duration,
                 complete:false,
-                id:++lastId
             }
+            newGoals = Object.assign(newGoals,state.goals)
+            vscode.postMessage({
+                command: 'alert',
+            })
             return {
                 ...state,
-                goals: [
-                    ...state.goals,
-                    newGoal,
-                ].sort((goal)=>(goal.time+goal.duration*1000))
+                goals:newGoals
             }
             break;
         case actions.GOAL_COMPLETE:
-            console.log("goal finish  "+action.payload)
-            let newGoals = state.goals;
-            let index= newGoals.findIndex((goal)=>goal.id==action.payload.id)
-            newGoals[index].complete = !newGoals[index].complete
-            console.log(newGoals)
+            id = action.payload.id;
+            newGoals = state.goals;
+            newGoals[id].complete = !newGoals[id].complete
             return {
                 ...state,
                 goals: newGoals
             }
             break;
+        case actions.GOAL_DELETE:
+            id = action.payload.id; 
+            newGoals = Object.assign({},state.goals)
+            delete newGoals[id]
+            return {
+                ...state,
+                goals: newGoals
+            }
+            break;
+        case actions.TIMER_START:
+            setInterval(()=>{
+                
+            })
         default: return state;
     break;
     }

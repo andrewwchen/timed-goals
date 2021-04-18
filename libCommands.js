@@ -219,9 +219,17 @@ function getNewId(context){
 }
 
 
-function getIndexPanelHtml(){
-  let scripts = fs.readFileSync('C:/Users/andre/Documents/GitHub/timed-goals/dist/compiled.js','utf8') 
-  let styles = fs.readFileSync('C:/Users/andre/Documents/GitHub/timed-goals/index.css','utf8')
+
+function getIndexPanelHtml(context){
+  const scriptPath = vscode.Uri.file(
+    path.join(context.extensionPath, 'dist', 'compiled.js')
+  );
+  let scripts = fs.readFileSync(scriptPath.path.slice(1),'utf8') 
+  const stylePath = vscode.Uri.file(
+    path.join(context.extensionPath, 'index.css')
+  );
+  let styles = fs.readFileSync(stylePath.path.slice(1),'utf8')
+
   return `
   <html>
   <head>
@@ -233,48 +241,7 @@ function getIndexPanelHtml(){
     </body>
     <!----Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> and <a href="https://www.flaticon.com/authors/srip" title="srip">srip</a> and <a href="https://www.flaticon.com/authors/kirill-kazachek" title="Kirill Kazachek">Kirill Kazachek</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>-->
     <script>
-    function reducer() {
-      var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-        goals: []
-      };
-      var action = arguments.length > 1 ? arguments[1] : undefined;
-    
-      switch (action.type) {
-        case actions.GOAL_ADD:
-          // insert command to add goals
-          var newGoal = {
-            title: action.payload.title,
-            time: action.payload.time,
-            duration: action.payload.duration,
-            complete: false,
-            id: ++lastId
-          };
-          
-          return _objectSpread(_objectSpread({}, state), {}, {
-            goals: [].concat(_toConsumableArray(state.goals), [newGoal]).sort(function (goal) {
-              return goal.time + goal.duration * 1000;
-            })
-          });
-          break;
-    
-        case actions.GOAL_COMPLETE:
-          console.log("goal finish  " + action.payload);
-          var newGoals = state.goals;
-          var index = newGoals.findIndex(function (goal) {
-            return goal.id == action.payload.id;
-          });
-          newGoals[index].complete = !newGoals[index].complete;
-          console.log(newGoals);
-          return _objectSpread(_objectSpread({}, state), {}, {
-            goals: newGoals
-          });
-          break;
-    
-        default:
-          return state;
-          break;
-      }
-    }
+    const vscode = acquireVsCodeApi();
     `+scripts+`</script>
     <style>`+styles+`</style>
 
@@ -309,8 +276,8 @@ function viewUI(context) {
     null,
     context.subscriptions
   );
-  currentPanel.webview.html = getIndexPanelHtml();
 
+  currentPanel.webview.html = getIndexPanelHtml(context);
   // Handle messages from the webview
   currentPanel.webview.onDidReceiveMessage(
     message => {
