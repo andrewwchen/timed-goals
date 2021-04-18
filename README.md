@@ -38,7 +38,7 @@ Javascript, Node.js, React, NPM
 
 ## Try it out
 * [GitHub Repo](https://github.com/chenmasterandrew/timed-goals)
-* [Visual Studio Marketplace]()
+* [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=chenmasterandrew.timedgoals)
 
 
 
