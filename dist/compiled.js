@@ -45,6 +45,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+// class based component at the top to make date tracking easier thru setInterval
 var App = /*#__PURE__*/function (_React$Component) {
   _inherits(App, _React$Component);
 
@@ -60,7 +61,8 @@ var App = /*#__PURE__*/function (_React$Component) {
       currentTime: Date.now()
     };
     return _this;
-  }
+  } // updates time to be used for List countdowns
+
 
   _createClass(App, [{
     key: "componentDidMount",
@@ -72,9 +74,7 @@ var App = /*#__PURE__*/function (_React$Component) {
           currentTime: Date.now()
         });
       }, 1000);
-    } //goals = goals.filter((goal) => goal.complete)
-    // converts object to sorted array of goal IDs
-
+    }
   }, {
     key: "render",
     value: function render() {
@@ -89,19 +89,22 @@ var App = /*#__PURE__*/function (_React$Component) {
   return App;
 }(_react["default"].Component);
 
-;
+; //component for list of goals
 
 var List = function List(props) {
+  // accessing redux store
   var goals = (0, _reactRedux.useSelector)(function (state) {
     return state.goals;
   });
   var dispatch = (0, _reactRedux.useDispatch)();
   (0, _react.useEffect)(function () {
+    // at initialization, fetch goals from vscode
     vscode.postMessage({
       command: 'getTimedGoals'
-    });
+    }); // all event listeners are here for communication with vs code
+
     window.addEventListener('message', function (event) {
-      var message = event.data;
+      var message = event.data; // sends redux action based on message from backend
 
       switch (message.command) {
         case "getTimedGoals":
@@ -121,7 +124,8 @@ var List = function List(props) {
           break;
       }
     });
-  }, []);
+  }, []); // turns object with IDs as attributes to array of ListItems
+
   var newGoals = Object.keys(goals).sort(function (a, b) {
     return b - a;
   });
@@ -157,10 +161,6 @@ exports["default"] = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
-var _actions = require("../redux/actions");
-
-var _reactRedux = require("react-redux");
-
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -183,6 +183,7 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+// component with name and duration inputs
 var AddItem = function AddItem() {
   var _useState = (0, _react.useState)(""),
       _useState2 = _slicedToArray(_useState, 2),
@@ -198,13 +199,14 @@ var AddItem = function AddItem() {
       duration = _useState4[0],
       changeDuration = _useState4[1];
 
-  var dispatch = (0, _reactRedux.useDispatch)();
-
   var addGoal = function addGoal() {
-    var totalSeconds = Number(duration.seconds) + Number(duration.minutes) * 60 + Number(duration.hours) * 3600;
+    // darn javascript and its weak types. this line gave us issues before we realized that "6" + "0" + "0" was "600", not 6
+    var totalSeconds = Number(duration.seconds) + Number(duration.minutes) * 60 + Number(duration.hours) * 3600; // checks that the inputs are filled out. better input validation needed in future
 
     if (name != "" && totalSeconds > 0) {
-      changeName("");
+      // resets name upon submitting
+      changeName(""); // sends new goal to backend to be stored
+
       vscode.postMessage({
         command: 'createTimedGoal',
         payload: {
@@ -215,7 +217,8 @@ var AddItem = function AddItem() {
         }
       });
     }
-  };
+  }; // handles the changes in name and duration
+
 
   var handleInput = function handleInput(event) {
     changeName(event.target.value);
@@ -285,7 +288,7 @@ var AddItem = function AddItem() {
 
 var _default = AddItem;
 exports["default"] = _default;
-},{"../redux/actions":6,"react":52,"react-redux":41}],3:[function(require,module,exports){
+},{"react":52}],3:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -299,9 +302,7 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _reactRedux = require("react-redux");
 
-var _actions = require("../redux/actions");
-
-var _goalfunctionality = require("../goalfunctionality");
+var _extra = require("../extra");
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
@@ -326,15 +327,15 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 var ListItem = function ListItem(props) {
-  var dispatch = (0, _reactRedux.useDispatch)();
   var goal = (0, _reactRedux.useSelector)(function (state) {
     return state.goals[props.id];
-  });
+  }); // all of the goal properties contained here
 
   var _useState = (0, _react.useState)(goal),
       _useState2 = _slicedToArray(_useState, 2),
       goalInfo = _useState2[0],
-      editGoal = _useState2[1];
+      editGoal = _useState2[1]; // detecting hover for timer and trash buttons
+
 
   var _useState3 = (0, _react.useState)(false),
       _useState4 = _slicedToArray(_useState3, 2),
@@ -344,10 +345,12 @@ var ListItem = function ListItem(props) {
   var endTime = goalInfo.duration * 1000 + goalInfo.time;
 
   var completeGoal = function completeGoal() {
-    // need to change completed status here manually instead of updating automatically thru redux, change in future
+    // need to change completed status here manually because it otherwise only detects state change when mouse leaves
+    // change in future
     editGoal(_objectSpread(_objectSpread({}, goalInfo), {}, {
       complete: !goalInfo.complete
-    }));
+    })); // sends message to backend that this goal has been completed
+
     vscode.postMessage({
       command: 'completeTimedGoal',
       payload: {
@@ -357,6 +360,7 @@ var ListItem = function ListItem(props) {
   };
 
   var deleteGoal = function deleteGoal() {
+    // sends message to backend that this goal has been deleted
     vscode.postMessage({
       command: 'deleteTimedGoal',
       payload: {
@@ -366,22 +370,27 @@ var ListItem = function ListItem(props) {
   };
 
   var showTimer = function showTimer() {
+    // sends message to backend that this goal will be displayed as timer
     vscode.postMessage({
       command: 'showTimer',
       payload: {
         id: props.id
       }
     });
-  };
+  }; // tracks remaining time, importing timeConverter to make time readable
 
-  var remainingTime = (0, _goalfunctionality.timeConverter)(endTime - props.currentTime) + " remaining";
+
+  var remainingTime = (0, _extra.timeConverter)(endTime - props.currentTime) + " remaining"; // might be suboptimal way but remaining time is changed to timeUpString when time has elapsed
+
   var timeUpString = "Time's Up!";
 
   if (remainingTime != timeUpString && endTime - props.currentTime < 0) {
-    remainingTime = timeUpString;
+    remainingTime = timeUpString; // deletes goal a minute after elapsing, in future might want better way to do this
+
     if (endTime + 60000 < props.currentTime) deleteGoal();
   }
 
+  ;
   return /*#__PURE__*/_react["default"].createElement("div", {
     className: "list-item",
     onMouseEnter: function onMouseEnter() {
@@ -422,7 +431,7 @@ var ListItem = function ListItem(props) {
 
 var _default = ListItem;
 exports["default"] = _default;
-},{"../goalfunctionality":4,"../redux/actions":6,"react":52,"react-redux":41}],4:[function(require,module,exports){
+},{"../extra":4,"react":52,"react-redux":41}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -430,6 +439,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.timeConverter = void 0;
 
+// file intended for misc functionality, only used it for this function
 // turns UNIX time to readable time
 var timeConverter = function timeConverter(time) {
   // 1000 ms for a second
@@ -479,6 +489,7 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
+// called when goals loaded from vscode
 var goalsLoaded = function goalsLoaded(goals) {
   return {
     type: actions.LOAD_GOALS,
@@ -486,7 +497,8 @@ var goalsLoaded = function goalsLoaded(goals) {
       goals: goals
     }
   };
-};
+}; // called when goal added by user
+
 
 exports.goalsLoaded = goalsLoaded;
 
@@ -501,7 +513,8 @@ var goalAdded = function goalAdded(name, duration, time, id, complete) {
       complete: complete
     }
   };
-};
+}; // called when goal completed by user
+
 
 exports.goalAdded = goalAdded;
 
@@ -512,7 +525,8 @@ var goalFinished = function goalFinished(id) {
       id: id
     }
   };
-};
+}; // called when goal deleted by user
+
 
 exports.goalFinished = goalFinished;
 
@@ -548,8 +562,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var lastId = 0;
-
+// reducer for the redux actions
 function reducer() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
     currentTime: Date.now(),
@@ -566,10 +579,9 @@ function reducer() {
         time: action.payload.time,
         duration: action.payload.duration,
         complete: action.payload.complete
-      };
-      console.log(newGoals);
+      }; // preserving immutability, done throughout this
+
       newGoals = Object.assign(newGoals, state.goals);
-      console.log(newGoals);
       return _objectSpread(_objectSpread({}, state), {}, {
         goals: newGoals
       });
@@ -610,9 +622,10 @@ function reducer() {
 
     default:
       return state;
-      break;
   }
 }
+
+;
 },{"./actionTypes.js":5}],8:[function(require,module,exports){
 function _extends() {
   module.exports = _extends = Object.assign || function (target) {

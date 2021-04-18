@@ -9,10 +9,6 @@ exports["default"] = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
-var _actions = require("../redux/actions");
-
-var _reactRedux = require("react-redux");
-
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -35,6 +31,7 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+// component with name and duration inputs
 var AddItem = function AddItem() {
   var _useState = (0, _react.useState)(""),
       _useState2 = _slicedToArray(_useState, 2),
@@ -50,13 +47,14 @@ var AddItem = function AddItem() {
       duration = _useState4[0],
       changeDuration = _useState4[1];
 
-  var dispatch = (0, _reactRedux.useDispatch)();
-
   var addGoal = function addGoal() {
-    var totalSeconds = Number(duration.seconds) + Number(duration.minutes) * 60 + Number(duration.hours) * 3600;
+    // darn javascript and its weak types. this line gave us issues before we realized that "6" + "0" + "0" was "600", not 6
+    var totalSeconds = Number(duration.seconds) + Number(duration.minutes) * 60 + Number(duration.hours) * 3600; // checks that the inputs are filled out. better input validation needed in future
 
     if (name != "" && totalSeconds > 0) {
-      changeName("");
+      // resets name upon submitting
+      changeName(""); // sends new goal to backend to be stored
+
       vscode.postMessage({
         command: 'createTimedGoal',
         payload: {
@@ -67,7 +65,8 @@ var AddItem = function AddItem() {
         }
       });
     }
-  };
+  }; // handles the changes in name and duration
+
 
   var handleInput = function handleInput(event) {
     changeName(event.target.value);

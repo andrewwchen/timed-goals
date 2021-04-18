@@ -44,6 +44,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+// class based component at the top to make date tracking easier thru setInterval
 var App = /*#__PURE__*/function (_React$Component) {
   _inherits(App, _React$Component);
 
@@ -59,7 +60,8 @@ var App = /*#__PURE__*/function (_React$Component) {
       currentTime: Date.now()
     };
     return _this;
-  }
+  } // updates time to be used for List countdowns
+
 
   _createClass(App, [{
     key: "componentDidMount",
@@ -71,9 +73,7 @@ var App = /*#__PURE__*/function (_React$Component) {
           currentTime: Date.now()
         });
       }, 1000);
-    } //goals = goals.filter((goal) => goal.complete)
-    // converts object to sorted array of goal IDs
-
+    }
   }, {
     key: "render",
     value: function render() {
@@ -88,19 +88,22 @@ var App = /*#__PURE__*/function (_React$Component) {
   return App;
 }(_react["default"].Component);
 
-;
+; //component for list of goals
 
 var List = function List(props) {
+  // accessing redux store
   var goals = (0, _reactRedux.useSelector)(function (state) {
     return state.goals;
   });
   var dispatch = (0, _reactRedux.useDispatch)();
   (0, _react.useEffect)(function () {
+    // at initialization, fetch goals from vscode
     vscode.postMessage({
       command: 'getTimedGoals'
-    });
+    }); // all event listeners are here for communication with vs code
+
     window.addEventListener('message', function (event) {
-      var message = event.data;
+      var message = event.data; // sends redux action based on message from backend
 
       switch (message.command) {
         case "getTimedGoals":
@@ -120,7 +123,8 @@ var List = function List(props) {
           break;
       }
     });
-  }, []);
+  }, []); // turns object with IDs as attributes to array of ListItems
+
   var newGoals = Object.keys(goals).sort(function (a, b) {
     return b - a;
   });

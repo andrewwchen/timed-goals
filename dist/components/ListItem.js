@@ -11,9 +11,7 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _reactRedux = require("react-redux");
 
-var _actions = require("../redux/actions");
-
-var _goalfunctionality = require("../goalfunctionality");
+var _extra = require("../extra");
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
@@ -38,15 +36,15 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 var ListItem = function ListItem(props) {
-  var dispatch = (0, _reactRedux.useDispatch)();
   var goal = (0, _reactRedux.useSelector)(function (state) {
     return state.goals[props.id];
-  });
+  }); // all of the goal properties contained here
 
   var _useState = (0, _react.useState)(goal),
       _useState2 = _slicedToArray(_useState, 2),
       goalInfo = _useState2[0],
-      editGoal = _useState2[1];
+      editGoal = _useState2[1]; // detecting hover for timer and trash buttons
+
 
   var _useState3 = (0, _react.useState)(false),
       _useState4 = _slicedToArray(_useState3, 2),
@@ -56,10 +54,12 @@ var ListItem = function ListItem(props) {
   var endTime = goalInfo.duration * 1000 + goalInfo.time;
 
   var completeGoal = function completeGoal() {
-    // need to change completed status here manually instead of updating automatically thru redux, change in future
+    // need to change completed status here manually because it otherwise only detects state change when mouse leaves
+    // change in future
     editGoal(_objectSpread(_objectSpread({}, goalInfo), {}, {
       complete: !goalInfo.complete
-    }));
+    })); // sends message to backend that this goal has been completed
+
     vscode.postMessage({
       command: 'completeTimedGoal',
       payload: {
@@ -69,6 +69,7 @@ var ListItem = function ListItem(props) {
   };
 
   var deleteGoal = function deleteGoal() {
+    // sends message to backend that this goal has been deleted
     vscode.postMessage({
       command: 'deleteTimedGoal',
       payload: {
@@ -78,22 +79,27 @@ var ListItem = function ListItem(props) {
   };
 
   var showTimer = function showTimer() {
+    // sends message to backend that this goal will be displayed as timer
     vscode.postMessage({
       command: 'showTimer',
       payload: {
         id: props.id
       }
     });
-  };
+  }; // tracks remaining time, importing timeConverter to make time readable
 
-  var remainingTime = (0, _goalfunctionality.timeConverter)(endTime - props.currentTime) + " remaining";
+
+  var remainingTime = (0, _extra.timeConverter)(endTime - props.currentTime) + " remaining"; // might be suboptimal way but remaining time is changed to timeUpString when time has elapsed
+
   var timeUpString = "Time's Up!";
 
   if (remainingTime != timeUpString && endTime - props.currentTime < 0) {
-    remainingTime = timeUpString;
+    remainingTime = timeUpString; // deletes goal a minute after elapsing, in future might want better way to do this
+
     if (endTime + 60000 < props.currentTime) deleteGoal();
   }
 
+  ;
   return /*#__PURE__*/_react["default"].createElement("div", {
     className: "list-item",
     onMouseEnter: function onMouseEnter() {

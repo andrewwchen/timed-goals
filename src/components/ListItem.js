@@ -1,47 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { goalFinished, goalDeleted } from '../redux/actions';
-import { timeConverter } from '../goalfunctionality'
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { timeConverter } from '../extra';
 
 const ListItem = (props) => {
-    const dispatch = useDispatch();
-    const goal = useSelector(state => state.goals[props.id])
-    let [goalInfo,editGoal] = useState(goal)
-    let [hoverActive, toggleHover] = useState(false)
+    const goal = useSelector(state => state.goals[props.id]);
+    // all of the goal properties contained here
+    let [goalInfo,editGoal] = useState(goal);
+    // detecting hover for timer and trash buttons
+    let [hoverActive, toggleHover] = useState(false);
     let endTime = goalInfo.duration*1000+goalInfo.time;
     
     const completeGoal = () => {
-        // need to change completed status here manually instead of updating automatically thru redux, change in future
-        editGoal({...goalInfo, complete:!goalInfo.complete})
+        // need to change completed status here manually because it otherwise only detects state change when mouse leaves
+        // change in future
+        editGoal({...goalInfo, complete:!goalInfo.complete});
+        // sends message to backend that this goal has been completed
         vscode.postMessage({
             command: 'completeTimedGoal',
             payload: {
                 id:props.id
             }
-        })
-    }
+        });
+    };
     const deleteGoal = () =>{
+        // sends message to backend that this goal has been deleted
         vscode.postMessage({
             command: 'deleteTimedGoal',
             payload: {
                 id:props.id
             }
-        })
-    }
+        });
+    };
     const showTimer = () =>{
+        // sends message to backend that this goal will be displayed as timer
         vscode.postMessage({
             command: 'showTimer',
             payload: {
                 id:props.id
             }
-        })
-    }
-    let remainingTime=timeConverter(endTime - props.currentTime) + " remaining"
-    const timeUpString = "Time's Up!"
+        });
+    };
+    // tracks remaining time, importing timeConverter to make time readable
+    let remainingTime=timeConverter(endTime - props.currentTime) + " remaining";
+    // might be suboptimal way but remaining time is changed to timeUpString when time has elapsed
+    const timeUpString = "Time's Up!";
     if (remainingTime!=timeUpString && (endTime - props.currentTime) < 0) {
-        remainingTime=timeUpString
-        if (endTime + 60000 < props.currentTime) deleteGoal()
-    }
+        remainingTime=timeUpString;
+        // deletes goal a minute after elapsing, in future might want better way to do this
+        if (endTime + 60000 < props.currentTime) deleteGoal();
+    };
     return (
         <div className="list-item" onMouseEnter={()=>{toggleHover(true)}} onMouseLeave={()=>{toggleHover(false)}}> 
             <div className="item-check" onClick={completeGoal}>

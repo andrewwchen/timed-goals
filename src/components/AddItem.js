@@ -1,32 +1,33 @@
 import React, { useState } from 'react';
-import { goalAdded } from '../redux/actions';
-import { useDispatch } from 'react-redux';
 
+// component with name and duration inputs
 const AddItem = () =>{
     let [name, changeName] = useState("");
-    let [duration, changeDuration] = useState({seconds:0,minutes:0,hours:0})
-    const dispatch = useDispatch();
+    let [duration, changeDuration] = useState({seconds:0, minutes:0, hours:0});
     const addGoal = () =>{
-        let totalSeconds = Number(duration.seconds)+Number(duration.minutes)*60+Number(duration.hours)*3600
-        if (name!=""&&totalSeconds>0){
+        // darn javascript and its weak types. this line gave us issues before we realized that "6" + "0" + "0" was "600", not 6
+        let totalSeconds = Number(duration.seconds)+Number(duration.minutes)*60+Number(duration.hours)*3600;
+        // checks that the inputs are filled out. better input validation needed in future
+        if (name != "" && totalSeconds > 0){
+            // resets name upon submitting
             changeName("");
+            // sends new goal to backend to be stored
             vscode.postMessage({
                 command: 'createTimedGoal',
                 payload: {
                     time: Date.now(),
-                    name:name,
+                    name: name,
                     duration: totalSeconds,
-                    complete:false
+                    complete: false
                 }
             })
         }
-    }
-    const handleInput = event =>{
-        changeName(event.target.value);
-    }
-    const handleSecond = event => {changeDuration({...duration,seconds:event.target.value})}
-    const handleMinute = event => {changeDuration({...duration,minutes:event.target.value})}
-    const handleHour = event => {changeDuration({...duration,hours:event.target.value})}
+    };
+    // handles the changes in name and duration
+    const handleInput = event =>{changeName(event.target.value);};
+    const handleSecond = event => {changeDuration({...duration,seconds:event.target.value});};
+    const handleMinute = event => {changeDuration({...duration,minutes:event.target.value});};
+    const handleHour = event => {changeDuration({...duration,hours:event.target.value});};
     return (
         <div className="list-item" id = "additem"> 
             <div className = "item-check" onClick={addGoal}>
@@ -43,7 +44,7 @@ const AddItem = () =>{
                 </div>
             </div>
         </div>
-    )
+    );
 };
 
 export default AddItem;

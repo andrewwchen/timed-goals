@@ -326,6 +326,5 @@ async function viewUI(context) {
 }
 
 module.exports = {
-  showTimer,
   viewUI
 }

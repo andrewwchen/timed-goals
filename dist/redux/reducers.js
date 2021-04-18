@@ -19,8 +19,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var lastId = 0;
-
+// reducer for the redux actions
 function reducer() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
     currentTime: Date.now(),
@@ -37,10 +36,9 @@ function reducer() {
         time: action.payload.time,
         duration: action.payload.duration,
         complete: action.payload.complete
-      };
-      console.log(newGoals);
+      }; // preserving immutability, done throughout this
+
       newGoals = Object.assign(newGoals, state.goals);
-      console.log(newGoals);
       return _objectSpread(_objectSpread({}, state), {}, {
         goals: newGoals
       });
@@ -81,6 +79,7 @@ function reducer() {
 
     default:
       return state;
-      break;
   }
 }
+
+;
