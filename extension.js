@@ -3,7 +3,6 @@
 // const { createExpressionWithTypeArguments } = require('typescript');
 const vscode = require('vscode');
 const libCommands = require('./libCommands')
-const data = require('./testData.json')
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -14,7 +13,7 @@ const data = require('./testData.json')
 function activate(context) {
 
 	// Create global state on startup
-	context.globalState.update('data', {goals:[]});
+	context.globalState.update('data', {goals:[ ]});
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
@@ -51,7 +50,9 @@ function activate(context) {
 	});
 
 	let testCommand2 = vscode.commands.registerCommand('timedgoals.createProgressBar', function(){
-		libCommands.createProgressBar(data.goals[0]);
+		let item = libCommands.createTimedGoal(Date.now() - 5000, "This is the name", 10, false);
+		libCommands.addTimedGoal(context, item);
+		libCommands.createProgressBar(context.globalState.get('data').goals[0])
 	});
 
 	// Push all functions so that VSCode knows about them
