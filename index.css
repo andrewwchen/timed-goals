@@ -1,0 +1,69 @@
+* {
+    font-family:"Segoe UI"
+}
+body {
+    margin:0
+}
+#react-content{
+    width:100%;
+}
+#react-container {
+    margin-left:36px
+}
+#settings {
+    position: absolute;
+    top:24px;
+    right:36px;
+    width:24px;
+    height:24px;
+    cursor:pointer;
+}
+#goal-title {
+    font-size:48px;
+    margin-bottom:12px;
+    font-weight:600
+}
+.list-item {
+    width:100%;
+    display:inline-flex;
+    margin-bottom:12px;
+    height:64px;
+}
+.list-item > div {
+    margin: auto 0
+}
+.item-check {
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border: 4px solid black;
+    cursor:pointer;
+}
+.item-check-image {
+    width:32px;
+    height:32px;
+    position:relative;
+    left:2px;
+    top:2px;
+}
+.item-info{
+    position:relative;
+    left:12px
+}
+.item-title {
+    font-size: 18px;
+}
+.item-time {
+    font-size:14px
+}
+#additem-add {
+    width:24px;
+    height:24px;
+    position:relative;
+    left:6px;
+    top:6px;
+}
+#additem-input {
+    width:100%;
+    height:44px;
+}
