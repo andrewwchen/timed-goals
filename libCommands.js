@@ -2,6 +2,7 @@
 const fs = require('fs');
 const vscode = require('vscode');
 const defaultData = require('./defaultData.json');
+const path = require("path");
 
 /*
 msToStr: A helper function that converts time in milliseconds to formatted
@@ -183,10 +184,11 @@ function completeTimedGoal(id, context) {
 /**
  * @param {vscode.ExtensionContext} context
  */
-const useDefaultData = false;
+const useDefaultData = true;
 function getTimedGoals(context) {
+  context.globalState.update('data', defaultData);
   let oldGoals = context.globalState.get('data').goals;
-  if (useDefaultData || !oldGoals || oldGoals.length < 1) {
+  if (useDefaultData || oldGoals === undefined || oldGoals.length < 1) {
     if (useDefaultData) {
       context.globalState.update('data', defaultData);
     } else {
@@ -284,9 +286,9 @@ function viewUI(context) {
       switch (message.command) {
         case 'createTimedGoal':
           let newId = getNewId(context);
-          let newGoal = createTimedGoal(message.time, message.name, message.duration, message.complete, newId);
+          let newGoal = createTimedGoal(message.payload.time, message.payload.name, message.payload.duration, message.payload.complete, newId); 
           addTimedGoal(context, newGoal);
-          currentPanel.webview.postMessage({ command: 'createTimedGoal', time: message.time, name: message.name, duration: message.duration, complete: message.complete, id: newId });
+          currentPanel.webview.postMessage({ command: 'createTimedGoal', payload:{time: message.payload.time, name: message.payload.name, duration: message.payload.duration, complete: message.payload.complete, id: newId} });
           return;
         case 'showTimer':
           showTimer(context);
@@ -300,6 +302,7 @@ function viewUI(context) {
         case 'getTimedGoals':
           let goals = getTimedGoals(context);
           currentPanel.webview.postMessage({ command: 'getTimedGoals', goals: goals });
+          console.log("Got goals")
           return;
       }
     },

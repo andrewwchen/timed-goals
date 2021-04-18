@@ -1,14 +1,16 @@
 import * as actions from './actionTypes.js'
 
-export const timerStarted = () =>({
-    type:actions.TIMER_START
+export const goalsLoaded = () =>({
+    type:actions.LOAD_GOALS
 })
-export const goalAdded = (name, duration) =>({
+export const goalAdded = (name, duration, time, id, complete) =>({
     type:actions.GOAL_ADD,
     payload: {
         name:name,
         duration:duration,
-        time:Date.now()
+        time:time,
+        id:id,
+        complete:complete
     }
 })
 

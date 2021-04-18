@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Provider, useSelector } from 'react-redux';
+import { Provider, useSelector, useDispatch} from 'react-redux';
 import { createStore } from 'redux';
 import reducer from './redux/reducers.js';
+import { goalsLoaded, goalFinished, goalDeleted, goalAdded } from './redux/actions';
 
 import ListItem from './components/ListItem';
 import AddItem from './components/AddItem';
@@ -16,9 +17,7 @@ class App extends React.Component{
         setInterval(()=>{
             this.setState({currentTime:Date.now()});
         },1000)
-        window.addEventListener('message',event =>{
-            const message = event.data
-        })
+       
     }
     //goals = goals.filter((goal) => goal.complete)
     // converts object to sorted array of goal IDs
@@ -35,8 +34,19 @@ class App extends React.Component{
 
 const List = (props) =>{
     const goals = useSelector(state => state.goals)
+    const dispatch = useDispatch()
+    useEffect(()=>{
+        dispatch(goalsLoaded())
+        window.addEventListener('message',event =>{
+            const message = event.data
+            switch (message.command) {
+                case "createTimedGoal":
+                    dispatch(goalAdded(message.payload))
+
+            }
+        })
+    },[])
     let newGoals = Object.keys(goals).sort((a,b)=>b-a)
-    console.log(props.currentTime)
     newGoals = newGoals.map((goalID)=>(<ListItem key={goalID} id = {goalID} currentTime={props.currentTime}/>))
     return (
         <div id ="goal-list">

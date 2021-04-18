@@ -7,16 +7,13 @@ export default function reducer(state={currentTime:Date.now(),goals:{}},action){
         case actions.GOAL_ADD:
             // insert command to add goals
             newGoals = {}
-            newGoals[++lastId] = {
+            newGoals[action.payload.id] = {
                 name: action.payload.name, 
                 time: action.payload.time,
                 duration:action.payload.duration,
-                complete:false,
+                complete:action.payload.complete,
             }
             newGoals = Object.assign(newGoals,state.goals)
-            vscode.postMessage({
-                command: 'alert',
-            })
             return {
                 ...state,
                 goals:newGoals
@@ -40,10 +37,12 @@ export default function reducer(state={currentTime:Date.now(),goals:{}},action){
                 goals: newGoals
             }
             break;
-        case actions.TIMER_START:
-            setInterval(()=>{
-                
+        case actions.LOAD_GOALS:
+            vscode.postMessage({
+                command: 'getTimedGoals'
             })
+            console.log("LOADED")
+            return state
         default: return state;
     break;
     }

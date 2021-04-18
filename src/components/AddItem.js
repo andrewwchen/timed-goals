@@ -9,7 +9,15 @@ const AddItem = () =>{
     const addGoal = () =>{
         changeName("");
         let totalSeconds = duration.seconds+duration.minutes*60+duration.hours*3600
-        dispatch(goalAdded(name,totalSeconds));
+        vscode.postMessage({
+            command: 'createTimedGoal',
+            payload: {
+                time: Date.now(),
+                name:name,
+                duration: totalSeconds,
+                complete:false
+            }
+        })
     }
     const handleInput = event =>{
         changeName(event.target.value);

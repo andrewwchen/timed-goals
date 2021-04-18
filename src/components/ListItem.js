@@ -23,7 +23,7 @@ const ListItem = (props) => {
                 {(goalInfo.complete) ? (<img className = "item-check-image" src="https://www.dropbox.com/s/4ewq1dfrjgab2rt/check.png" />) : ""} 
             </div>
             <div className="item-info">
-                <div className="item-title">{goalInfo.title}</div>
+                <div className="item-name">{goalInfo.name}</div>
                 <div className="item-time">{timeConverter(endTime - props.currentTime)+" remaining"}</div>
             </div>
             <div onClick={deleteGoal}>
