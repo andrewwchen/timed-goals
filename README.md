@@ -2,7 +2,7 @@
 
 ## Inspiration
 
-Look: coding is hard, and coding under time pressure is even harder. When you're juggling 50 things that all need to get done before you know whether or not _anything_ you've written so far actually works, you begin to understand the importance of scheduling and organization. Timed-Goals, a VSCode extention that makes it easy to set up reminders and todos from _within_ your favorite text editor, hopes to make the life of your average developer just that much easier. With timed reminders and named todos, Timed-Goals makes sure that you'll never feel lost in development again.
+Look: coding is hard, and coding under time pressure is even harder. When you're juggling 50 things that all need to get done before you know whether or not _anything_ you've written so far actually works, you begin to understand the importance of scheduling and organization. Timed-Goals, a VSCode extention that makes it easy to set up reminders and todos from _within_ your favorite text editor, hopes to make the life of your average developer just _that_ much easier. With timed reminders and named todos, Timed-Goals makes sure that you'll never feel lost in development again.
 
 ## How we built it
 We built this VSCode extention using Npm, ReactJS, and the VSCode API.
