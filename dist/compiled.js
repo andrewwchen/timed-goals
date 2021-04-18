@@ -448,7 +448,7 @@ var timeConverter = function timeConverter(time) {
   var hours = Math.floor(time / 3600000);
   var minutes = Math.floor(time % 3600000 / 60000);
   var seconds = Math.floor(time % 60000 / 1000);
-  if (hours > 0) return hours + " hours" + (!minutes == 0 ? " and " + minutes + " minutes" : "");else if (minutes > 0) return minutes + " minutes" + (!seconds == 0 ? " and " + seconds + " seconds" : "");else if (seconds >= 0) return seconds + " seconds";else "No Time";
+  if (hours > 0) return hours + " hour" + (hours != 1 ? "s " : " ") + (!minutes == 0 ? " and " + minutes + " minute" + (minutes != 1 ? "s " : " ") : "");else if (minutes > 0) return minutes + " minute" + (minutes != 1 ? "s " : " ") + (!seconds == 0 ? " and " + seconds + " second" + (seconds != 1 ? "s " : " ") : "");else if (seconds >= 0) return seconds + " second" + (seconds != 1 ? "s " : " ");else "No Time";
 };
 
 exports.timeConverter = timeConverter;
