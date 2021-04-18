@@ -12,7 +12,8 @@
 	"activationEvents": [
 		"onCommand:timedgoals.helloWorld",
 		"onCommand:timedgoals.createProgressBar",
-		"onCommand:timedgoals.testCommand"
+		"onCommand:timedgoals.testCommand",
+		"*"
 	],
 	"main": "./extension.js",
 	"contributes": {
