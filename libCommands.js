@@ -1,14 +1,12 @@
 // VSCode import
 const fs = require('fs');
 const vscode = require('vscode');
-const path = require('path');
 const defaultData = require('./defaultData.json');
 
 /*
 msToStr: A helper function that converts time in milliseconds to formatted
          hours, minutes, seconds
 int ms
-
 referenced: https://stackoverflow.com/questions/13601737/how-to-convert-milliseconds-into-a-readable-date-minutesseconds-format
 */
 function msToStr(ms) {
@@ -185,15 +183,21 @@ function completeTimedGoal(id, context) {
 /**
  * @param {vscode.ExtensionContext} context
  */
+const useDefaultData = false;
 function getTimedGoals(context) {
   let oldGoals = context.globalState.get('data').goals;
-  if (true || !oldGoals || oldGoals.length < 1) {
-    context.globalState.update('data', defaultData);
-    oldGoals = context.globalState.get('data').goals;
-    for (let i=0; i < oldGoals.length; i++) {
-      oldGoals[i].time = Date.now();
+  if (useDefaultData || !oldGoals || oldGoals.length < 1) {
+    if (useDefaultData) {
+      context.globalState.update('data', defaultData);
+    } else {
+      context.globalState.update('data', {goals: [] } )
     }
-    
+    oldGoals = context.globalState.get('data').goals;
+    if (useDefaultData) {
+      for (let i=0; i < oldGoals.length; i++) {
+        oldGoals[i].time = Date.now();
+      }
+    }
   }
   return oldGoals;
 }
@@ -215,6 +219,7 @@ function getNewId(context){
 }
 
 
+
 function getIndexPanelHtml(context){
   const scriptPath = vscode.Uri.file(
     path.join(context.extensionPath, 'dist', 'compiled.js')
@@ -224,6 +229,7 @@ function getIndexPanelHtml(context){
     path.join(context.extensionPath, 'index.css')
   );
   let styles = fs.readFileSync(stylePath.path.slice(1),'utf8')
+
   return `
   <html>
   <head>
@@ -270,31 +276,39 @@ function viewUI(context) {
     null,
     context.subscriptions
   );
-  // Get path to resource on disk
-  const add = vscode.Uri.file(
-    path.join(context.extensionPath, 'static', 'add.png')
-  );
-  const check = vscode.Uri.file(
-    path.join(context.extensionPath, 'static', 'check.png')
-  );
-  const more = vscode.Uri.file(
-    path.join(context.extensionPath, 'static', 'more.png')
-  );
 
-  // And get the special URI to use with the webview
-  const addPngSrc = currentPanel.webview.asWebviewUri(add);
-  const checkPngSrc = currentPanel.webview.asWebviewUri(check);
-  const morePngSrc = currentPanel.webview.asWebviewUri(more);
   currentPanel.webview.html = getIndexPanelHtml(context);
+  // Handle messages from the webview
+  currentPanel.webview.onDidReceiveMessage(
+    message => {
+      switch (message.command) {
+        case 'createTimedGoal':
+          let newId = getNewId(context);
+          let newGoal = createTimedGoal(message.time, message.name, message.duration, message.complete, newId);
+          addTimedGoal(context, newGoal);
+          currentPanel.webview.postMessage({ command: 'createTimedGoal', time: message.time, name: message.name, duration: message.duration, complete: message.complete, id: newId });
+          return;
+        case 'showTimer':
+          showTimer(context);
+          return;
+        case 'deleteTimedGoal':
+          deleteTimedGoal(message.id, context);
+          return;
+        case 'completeTimedGoal':
+          completeTimedGoal(message.id, context);
+          return;
+        case 'getTimedGoals':
+          let goals = getTimedGoals(context);
+          currentPanel.webview.postMessage({ command: 'getTimedGoals', goals: goals });
+          return;
+      }
+    },
+    undefined,
+    context.subscriptions
+  );
 }
 
 module.exports = {
-  createTimedGoal,
-  addTimedGoal,
   showTimer,
-  deleteTimedGoal,
-  completeTimedGoal,
-  getTimedGoals,
-  getNewId,
   viewUI
 }
