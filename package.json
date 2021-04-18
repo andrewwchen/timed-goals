@@ -1,0 +1,39 @@
+{
+  "name": "hackdartmouth",
+  "version": "1.0.0",
+  "description": "Julian George, Andrew Chen, and Alphonso Bradham's submission for HackDartmouth 2021",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx babel src --out-dir dist & browserify dist/App.js > dist/compiled.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chenmasterandrew/timed-goals.git"
+  },
+  "author": "julian@juliangeorge.net",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chenmasterandrew/timed-goals/issues"
+  },
+  "homepage": "https://github.com/chenmasterandrew/timed-goals#readme",
+  "dependencies": {
+    "@babel/cli": "^7.13.14",
+    "@babel/core": "^7.13.15",
+    "@babel/preset-env": "^7.13.15",
+    "@babel/preset-react": "^7.13.13",
+    "@babel/register": "^7.13.14",
+    "browserify": "^17.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.3",
+    "react-spring": "^9.1.1",
+    "redux": "^4.0.5"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  }
+}
