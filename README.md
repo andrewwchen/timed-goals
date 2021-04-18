@@ -31,7 +31,7 @@ We built this VSCode extention using Npm, ReactJS, and the VSCode API.
 
 
 ## What's next for Timed Goals
-
+* This was out team's first time working with VSCode extentions and our first time working together! Now, empowered with the knowledge of how to build VSCode extentions, you can expect that each of us will takes this experience in spades and use what we've learned to build more (and better) extentions in the future. Rest assured, you haven't heard the last of team Timed-Goals!
 
 ## Built With
 Javascript, Node.js, React, NPM
