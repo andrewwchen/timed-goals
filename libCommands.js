@@ -2,7 +2,7 @@
 const fs = require('fs');
 const vscode = require('vscode');
 const defaultData = require('./defaultData.json');
-const path = require("path");
+const path = require('path')
 
 /*
 msToStr: A helper function that converts time in milliseconds to formatted
@@ -184,15 +184,14 @@ function completeTimedGoal(id, context) {
 /**
  * @param {vscode.ExtensionContext} context
  */
-const useDefaultData = true;
-function getTimedGoals(context) {
-  context.globalState.update('data', defaultData);
+const useDefaultData = false;
+async function getTimedGoals(context) {
   let oldGoals = context.globalState.get('data').goals;
-  if (useDefaultData || oldGoals === undefined || oldGoals.length < 1) {
+  if (useDefaultData || !oldGoals || oldGoals.length < 1) {
     if (useDefaultData) {
-      context.globalState.update('data', defaultData);
+      await context.globalState.update('data', defaultData);
     } else {
-      context.globalState.update('data', {goals: [] } )
+      await context.globalState.update('data', {goals: [] } )
     }
     oldGoals = context.globalState.get('data').goals;
     if (useDefaultData) {
@@ -221,7 +220,6 @@ function getNewId(context){
 }
 
 
-
 function getIndexPanelHtml(context){
   const scriptPath = vscode.Uri.file(
     path.join(context.extensionPath, 'dist', 'compiled.js')
@@ -231,7 +229,6 @@ function getIndexPanelHtml(context){
     path.join(context.extensionPath, 'index.css')
   );
   let styles = fs.readFileSync(stylePath.path.slice(1),'utf8')
-
   return `
   <html>
   <head>
@@ -239,11 +236,12 @@ function getIndexPanelHtml(context){
         <title>Timed Goals</title>
     </head>
     <body>
-        <div id="react-content"><h1>HELLO </h1> </div>
+        <div id="react-content"></div>
     </body>
     <!----Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> and <a href="https://www.flaticon.com/authors/srip" title="srip">srip</a> and <a href="https://www.flaticon.com/authors/kirill-kazachek" title="Kirill Kazachek">Kirill Kazachek</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>-->
     <script>
     const vscode = acquireVsCodeApi();
+
     `+scripts+`</script>
     <style>`+styles+`</style>
 
@@ -278,18 +276,18 @@ function viewUI(context) {
     null,
     context.subscriptions
   );
-
   currentPanel.webview.html = getIndexPanelHtml(context);
+
   // Handle messages from the webview
   currentPanel.webview.onDidReceiveMessage(
     message => {
       switch (message.command) {
         case 'createTimedGoal':
-          console.log("received")
+          
           let newId = getNewId(context);
-          let newGoal = createTimedGoal(message.payload.time, message.payload.name, message.payload.duration, message.payload.complete, newId); 
+          let newGoal = createTimedGoal(message.time, message.name, message.duration, message.complete, newId);
           addTimedGoal(context, newGoal);
-          currentPanel.webview.postMessage({ command: 'createTimedGoal', payload:{time: message.payload.time, name: message.payload.name, duration: message.payload.duration, complete: message.payload.complete, id: newId} });
+          currentPanel.webview.postMessage({ command: 'createTimedGoal', time: message.time, name: message.name, duration: message.duration, complete: message.complete, id: newId });
           return;
         case 'showTimer':
           showTimer(context);
@@ -303,10 +301,13 @@ function viewUI(context) {
           currentPanel.webview.postMessage({ command: 'completeTimedGoal', payload:{ id:message.payload.id }});
           return;
         case 'getTimedGoals':
-          let goals = getTimedGoals(context);
-          currentPanel.webview.postMessage({ command: 'getTimedGoals', goals: goals });
-          console.log("Got goals")
-          return;
+          console.log("received")
+          let goals = async function() {
+            return await getTimedGoals(context);
+          }.then( () => {
+            currentPanel.webview.postMessage({ command: 'getTimedGoals', goals: goals });
+            return;
+          })
       }
     },
     undefined,
