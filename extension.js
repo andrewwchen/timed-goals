@@ -56,34 +56,17 @@ function activate(context) {
 	});
 
 	let viewUI = vscode.commands.registerCommand('timedgoals.viewUI', function(){
-		libCommands.viewUI();
+		libCommands.viewUI(context);
 	});
-	libCommands.viewUI();
 
 	// Push all functions so that VSCode knows about them
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(testCommand2);
 	context.subscriptions.push(testCommand);
 	context.subscriptions.push(viewUI);
-	let indexPanel = vscode.window.createWebviewPanel('timed-goals-webview', 'timed-goals', vscode.ViewColumn.Beside);
-	indexPanel.webview.html = getIndexPanelHtml();
+	libCommands.viewUI(context);
 }
 
-
-function getIndexPanelHtml(){
-	return `<!DOCTYPE html>
-	<html lang="en">
-	<head>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Cat Coding</title>
-	</head>
-	<body>
-			<h1>Timed Goals</h1>
-			<img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" width="300" />
-	</body>
-	</html>`;
-}
 
 // this method is called when your extension is deactivated
 function deactivate() {}

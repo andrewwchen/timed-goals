@@ -84,7 +84,6 @@ function createProgressBar(goal) {
 * Returns void.
 /**
  * @param {vscode.ExtensionContext} context
- * @param newTimedGoal: json object to add to state
  */
 function addTimedGoal(context, newTimedGoal){
     // Get current goals state
@@ -116,18 +115,52 @@ function createTimedGoal(time, name, duration, complete){
         }
 }
 
-function viewUI() {
-  const panel = vscode.window.createWebviewPanel(
-    'timedGoals', // Identifies the type of the webview. Used internally
-    'Timed Goals', // Title of the panel displayed to the user
-    vscode.ViewColumn.One, // Editor column to show the new webview panel in.
-    {} // Webview options. More on these later.
+function getIndexPanelHtml(){
+	return `<!DOCTYPE html>
+	<html lang="en">
+	<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Cat Coding</title>
+	</head>
+	<body>
+			<h1>Timed Goals</h1>
+			<img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" width="300" />
+	</body>
+	</html>`;
+}
+
+let currentPanel = undefined;
+function viewUI(context) {
+  const columnToShowIn = vscode.window.activeTextEditor
+    ? vscode.window.activeTextEditor.viewColumn
+    : undefined;
+  if (currentPanel) {
+    // If we already have a panel, show it in the target column
+    currentPanel.reveal(columnToShowIn);
+  } else {
+    // Otherwise, create a new panel
+    currentPanel = vscode.window.createWebviewPanel(
+      'timedGoals', // Identifies the type of the webview. Used internally
+      'Timed Goals', // Title of the panel displayed to the user
+      vscode.ViewColumn.One, // Editor column to show the new webview panel in.
+      {} // Webview options. More on these later.
+    );
+  }
+  // Reset when the current panel is closed
+  currentPanel.onDidDispose(
+    () => {
+      currentPanel = undefined;
+    },
+    null,
+    context.subscriptions
   );
+  currentPanel.webview.html = getIndexPanelHtml();
 }
 
 module.exports = {
-    createTimedGoal,
-    addTimedGoal,
-    createProgressBar,
-    viewUI
+  createTimedGoal,
+  addTimedGoal,
+  createProgressBar,
+  viewUI
 }
