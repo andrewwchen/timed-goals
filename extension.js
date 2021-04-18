@@ -55,10 +55,16 @@ function activate(context) {
 		libCommands.createProgressBar(context.globalState.get('data').goals[0])
 	});
 
+	let viewUI = vscode.commands.registerCommand('timedgoals.viewUI', function(){
+		libCommands.viewUI();
+	});
+	libCommands.viewUI();
+
 	// Push all functions so that VSCode knows about them
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(testCommand2);
 	context.subscriptions.push(testCommand);
+	context.subscriptions.push(viewUI);
 	let indexPanel = vscode.window.createWebviewPanel('timed-goals-webview', 'timed-goals', vscode.ViewColumn.Beside);
 	indexPanel.webview.html = getIndexPanelHtml();
 }
