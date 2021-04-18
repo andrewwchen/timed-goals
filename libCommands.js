@@ -285,6 +285,7 @@ function viewUI(context) {
     message => {
       switch (message.command) {
         case 'createTimedGoal':
+          console.log("received")
           let newId = getNewId(context);
           let newGoal = createTimedGoal(message.payload.time, message.payload.name, message.payload.duration, message.payload.complete, newId); 
           addTimedGoal(context, newGoal);
@@ -294,10 +295,12 @@ function viewUI(context) {
           showTimer(context);
           return;
         case 'deleteTimedGoal':
-          deleteTimedGoal(message.id, context);
+          deleteTimedGoal(message.payload.id, context);
+          currentPanel.webview.postMessage({ command: 'deleteTimedGoal', payload:{ id:message.payload.id }});
           return;
         case 'completeTimedGoal':
-          completeTimedGoal(message.id, context);
+          completeTimedGoal(message.payload.id, context);
+          currentPanel.webview.postMessage({ command: 'completeTimedGoal', payload:{ id:message.payload.id }});
           return;
         case 'getTimedGoals':
           let goals = getTimedGoals(context);

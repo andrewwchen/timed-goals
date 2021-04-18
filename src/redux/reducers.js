@@ -5,7 +5,7 @@ export default function reducer(state={currentTime:Date.now(),goals:{}},action){
     let id, newGoals
     switch (action.type) {
         case actions.GOAL_ADD:
-            // insert command to add goals
+            
             newGoals = {}
             newGoals[action.payload.id] = {
                 name: action.payload.name, 
@@ -14,6 +14,7 @@ export default function reducer(state={currentTime:Date.now(),goals:{}},action){
                 complete:action.payload.complete,
             }
             newGoals = Object.assign(newGoals,state.goals)
+            console.log(newGoals)
             return {
                 ...state,
                 goals:newGoals

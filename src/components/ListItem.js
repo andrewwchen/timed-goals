@@ -12,10 +12,20 @@ const ListItem = (props) => {
     const completeGoal = () => {
         // need to change completed status here manually instead of updating automatically thru redux, change in future
         editGoal({...goalInfo, complete:!goalInfo.complete})
-        dispatch(goalFinished(props.id))
+        vscode.postMessage({
+            command: 'completeTimedGoal',
+            payload: {
+                id:props.id
+            }
+        })
     }
     const deleteGoal = () =>{
-        dispatch(goalDeleted(props.id))
+        vscode.postMessage({
+            command: 'deleteTimedGoal',
+            payload: {
+                id:props.id
+            }
+        })
     }
     return (
         <div className="list-item" onMouseEnter={()=>{toggleDelete(true)}} onMouseLeave={()=>{toggleDelete(false)}}> 
