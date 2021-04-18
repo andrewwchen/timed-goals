@@ -220,6 +220,7 @@ function getNewId(context){
 }
 
 
+
 function getIndexPanelHtml(context){
   const scriptPath = vscode.Uri.file(
     path.join(context.extensionPath, 'dist', 'compiled.js')
@@ -241,10 +242,8 @@ function getIndexPanelHtml(context){
     <!----Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> and <a href="https://www.flaticon.com/authors/srip" title="srip">srip</a> and <a href="https://www.flaticon.com/authors/kirill-kazachek" title="Kirill Kazachek">Kirill Kazachek</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>-->
     <script>
     const vscode = acquireVsCodeApi();
-
     `+scripts+`</script>
     <style>`+styles+`</style>
-
   </html>
   `
 }
@@ -276,7 +275,9 @@ function viewUI(context) {
     null,
     context.subscriptions
   );
+
   currentPanel.webview.html = getIndexPanelHtml(context);
+
 
   // Handle messages from the webview
   currentPanel.webview.onDidReceiveMessage(
@@ -301,7 +302,6 @@ function viewUI(context) {
           currentPanel.webview.postMessage({ command: 'completeTimedGoal', payload:{ id:message.payload.id }});
           return;
         case 'getTimedGoals':
-          console.log("received")
           let goals = async function() {
             return await getTimedGoals(context);
           }.then( () => {
