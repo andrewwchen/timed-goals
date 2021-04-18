@@ -187,6 +187,9 @@ function completeTimedGoal(id, context) {
  */
 const useDefaultData = false;
 async function getTimedGoals(context) {
+  if (context.globalState.get('data') === undefined) {
+    await context.globalState.update('data', {goals: [] })
+  }
   let oldGoals = context.globalState.get('data').goals;
   if (useDefaultData || !oldGoals || oldGoals.length < 1) {
     if (useDefaultData) {
