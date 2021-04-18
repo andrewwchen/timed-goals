@@ -311,7 +311,6 @@ async function viewUI(context) {
           currentPanel.webview.postMessage({ command: 'completeTimedGoal', payload:{ id:message.payload.id }});
           return;
         case 'getTimedGoals':
-          console.log(message)
           let goals = await getTimedGoals(context);
           currentPanel.webview.postMessage({ command: 'getTimedGoals', payload:{goals: goals }});
           return;

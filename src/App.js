@@ -25,7 +25,7 @@ class App extends React.Component{
         return (
             <div id = "react-container">
                 < List currentTime={this.state.currentTime}/>
-                <img id = "settings" src="https://i.ibb.co/RB57Dty/more.png" />
+                {/*<img id = "settings" src="https://i.ibb.co/RB57Dty/more.png" />*/}
             </div>
         );
     }
