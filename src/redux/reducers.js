@@ -41,7 +41,7 @@ export default function reducer(state={currentTime:Date.now(),goals:{}},action){
             break;
         case actions.LOAD_GOALS:
             let goals = {}
-            action.payload.goals.foreach((goal)=>{goals[goal.id]={
+            action.payload.goals.forEach((goal)=>{goals[goal.id]={
                 name:goal.name,
                 duration:goal.duration,
                 time:goal.time,

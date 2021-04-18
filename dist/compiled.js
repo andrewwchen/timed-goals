@@ -82,9 +82,6 @@ var App = /*#__PURE__*/function (_React$Component) {
         id: "react-container"
       }, /*#__PURE__*/_react["default"].createElement(List, {
         currentTime: this.state.currentTime
-      }), /*#__PURE__*/_react["default"].createElement("img", {
-        id: "settings",
-        src: "https://i.ibb.co/RB57Dty/more.png"
       }));
     }
   }]);
@@ -597,7 +594,7 @@ function reducer() {
 
     case actions.LOAD_GOALS:
       var goals = {};
-      action.payload.goals.foreach(function (goal) {
+      action.payload.goals.forEach(function (goal) {
         goals[goal.id] = {
           name: goal.name,
           duration: goal.duration,
@@ -605,9 +602,11 @@ function reducer() {
           complete: goal.complete
         };
       });
+      console.log(goals);
       return _objectSpread(_objectSpread({}, state), {}, {
         goals: goals
       });
+      break;
 
     default:
       return state;

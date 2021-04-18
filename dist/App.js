@@ -81,9 +81,6 @@ var App = /*#__PURE__*/function (_React$Component) {
         id: "react-container"
       }, /*#__PURE__*/_react["default"].createElement(List, {
         currentTime: this.state.currentTime
-      }), /*#__PURE__*/_react["default"].createElement("img", {
-        id: "settings",
-        src: "https://i.ibb.co/RB57Dty/more.png"
       }));
     }
   }]);
